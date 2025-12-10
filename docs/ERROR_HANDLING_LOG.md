@@ -432,7 +432,113 @@ export async function apiClient<T>(endpoint: string, options?: RequestInit): Pro
 
 ---
 
-## 7. Aktuální známé problémy
+## 7. next-intl Layout Konfigurace
+
+> **Důležité:** Při použití next-intl s `[locale]` segmentem je kritické správně nakonfigurovat root a locale layouty.
+
+### 7.1 Problém: Duplicitní `<html>` a `<body>` tagy
+
+**Symptomy:**
+- Next.js vrací 404 pro všechny routy
+- Routy se nerozpoznávají
+- Chyba: "Multiple root layouts detected"
+
+**Příčina:**
+Když `app/layout.tsx` i `app/[locale]/layout.tsx` obsahují `<html>` a `<body>` tagy, dochází ke konfliktu. V Next.js může mít `<html>` a `<body>` pouze jeden layout na segment.
+
+### 7.2 Správná struktura
+
+```
+app/
+  layout.tsx           // ✅ MINIMAL – pouze `return children` (bez html/body)
+  not-found.tsx        // ✅ Client component s vlastní html/body (mimo locale)
+  [locale]/
+    layout.tsx         // ✅ Jediný s <html><body> + NextIntlClientProvider
+    not-found.tsx      // ✅ Not found pro locale routes
+    page.tsx
+```
+
+**Root Layout (app/layout.tsx):**
+```typescript
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return children; // Pouze předání children, žádné HTML tagy!
+}
+```
+
+**Locale Layout (app/[locale]/layout.tsx):**
+```typescript
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
+
+interface LocaleLayoutProps {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}
+
+export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
+  const { locale } = await params;
+  const messages = await getMessages();
+
+  return (
+    <html lang={locale}>
+      <body>
+        <NextIntlClientProvider messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+**Root Not Found (app/not-found.tsx):**
+```typescript
+'use client';
+
+export default function RootNotFound() {
+  return (
+    <html lang="cs">
+      <body>
+        <h1>404 - Stránka nenalezena</h1>
+      </body>
+    </html>
+  );
+}
+```
+
+### 7.3 Validace
+
+**Middleware logy by měly ukazovat:**
+```
+🔒 Middleware check: /
+🌍 Redirecting to /cs (307)
+🔒 Middleware check: /cs
+🌍 Locale resolved → 200
+○ Compiling /[locale] ...
+```
+
+### 7.4 Další časté problémy
+
+**Duplikátní klíče v JSON překladech:**
+```json
+// ❌ Způsobí silent runtime crash
+{
+  "common": {
+    "submit": "Odeslat",
+    "submit": "Potvrdit"  // Duplikát!
+  }
+}
+```
+
+**Řešení:** Vždy validovat JSON soubory a používat pouze unikátní klíče.
+
+---
+
+## 8. Aktuální známé problémy
 
 > Tato sekce se průběžně aktualizuje. Vyřešené problémy se mažou.
 
@@ -442,10 +548,11 @@ export async function apiClient<T>(endpoint: string, options?: RequestInit): Pro
 | NEXT15-001 | `params` a `searchParams` jsou nyní Promise | High | Vyřešeno | Implementováno v projektu - všechny dynamic routes používají async/await |
 | FETCH-001 | Cookies se neodesílají bez `credentials: 'include'` | Medium | Dokumentováno | Viz sekce 6.5 - nutné pro JWT autentizaci |
 | REACT19-001 | `setState` v `useEffect` způsobuje ESLint error | Medium | Vyřešeno | Použít `useSyncExternalStore` pro external state (cookies) |
+| I18N-001 | Duplicitní `<html>/<body>` v root a locale layoutech | High | Dokumentováno | Viz sekce 7 - root layout musí být minimální |
 
 ---
 
-## 8. Monitoring checklist
+## 9. Monitoring checklist
 
 - [ ] Sentry/podobná služba nakonfigurována
 - [x] Error boundary komponenty implementovány
