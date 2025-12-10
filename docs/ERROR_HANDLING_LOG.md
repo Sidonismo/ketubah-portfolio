@@ -198,6 +198,83 @@ export class UnauthorizedError extends AppError {
 }
 ```
 
+### 3.4 API a Route Endpoints Map
+
+**Implementované API endpointy:**
+
+| Endpoint | Metoda | Účel | Status |
+|----------|--------|------|--------|
+| `/api/contact` | POST | Kontaktní formulář (Resend email) | ✅ Implementováno |
+
+**Implementované frontend routes:**
+
+| Route | Soubor | Účel | Status |
+|-------|--------|------|--------|
+| `/[locale]` | `app/[locale]/page.tsx` | Homepage | ✅ Implementováno |
+| `/[locale]/products` | `app/[locale]/products/page.tsx` | Seznam produktů | ✅ Implementováno |
+| `/[locale]/products/[slug]` | `app/[locale]/products/[slug]/page.tsx` | Detail produktu | ✅ Implementováno |
+| `/[locale]/contact` | `app/[locale]/contact/page.tsx` | Kontaktní formulář | ✅ Implementováno |
+
+**Chybějící endpointy (dle PRD):**
+
+| Endpoint | Metoda | Účel | Status |
+|----------|--------|------|--------|
+| `/api/search` | GET | Meilisearch vyhledávání | ❌ TBD |
+| `/api/cron/exchange-rates` | GET | Aktualizace kurzů ČNB | ❌ TBD |
+| `/api/health` | GET | Health check endpoint | ❌ TBD |
+| `/[locale]/[slug]` | - | Dynamické stránky (about, faq, cookies) | ❌ TBD |
+
+**Doporučení:** Implementovat `/api/health` endpoint pro monitoring dostupnosti služeb:
+
+```typescript
+// app/api/health/route.ts
+import { NextResponse } from 'next/server';
+
+export async function GET() {
+  const checks = {
+    postgres: false,
+    meilisearch: false,
+    resend: false,
+  };
+
+  try {
+    // Check PostgreSQL
+    const { payload } = await import('@/lib/payload');
+    await payload.find({ collection: 'users', limit: 1 });
+    checks.postgres = true;
+  } catch (e) {
+    console.error('Postgres health check failed:', e);
+  }
+
+  try {
+    // Check Meilisearch
+    const { meilisearch } = await import('@/lib/meilisearch');
+    await meilisearch.health();
+    checks.meilisearch = true;
+  } catch (e) {
+    console.error('Meilisearch health check failed:', e);
+  }
+
+  try {
+    // Check Resend (simple API key validation)
+    checks.resend = !!process.env.RESEND_API_KEY;
+  } catch (e) {
+    console.error('Resend health check failed:', e);
+  }
+
+  const allHealthy = Object.values(checks).every(v => v);
+
+  return NextResponse.json(
+    { 
+      status: allHealthy ? 'healthy' : 'degraded',
+      checks,
+      timestamp: new Date().toISOString(),
+    },
+    { status: allHealthy ? 200 : 503 }
+  );
+}
+```
+
 ---
 
 ## 4. Fallback strategie
