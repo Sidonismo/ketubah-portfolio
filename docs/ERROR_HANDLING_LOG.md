@@ -2,7 +2,7 @@
 
 > **Účel:** Centrální dokumentace pro error handling strategie a aktuální známé problémy.
 > **Aktualizace:** Průběžně během vývoje, promazává se nepotřebný balast.
-> **Poslední aktualizace:** 2025-12-09
+> **Poslední aktualizace:** 2025-12-10
 
 ---
 
@@ -719,6 +719,8 @@ useEffect(() => setMounted(true), []);
 | REACT19-001 | `setState` v `useEffect` způsobuje ESLint error | Medium | Vyřešeno | Použít `useSyncExternalStore` pro external state (cookies) |
 | I18N-001 | Duplicitní `<html>/<body>` v root a locale layoutech | High | Dokumentováno | Viz sekce 7 - root layout musí být minimální |
 | HYDRATION-001 | Browser extensions způsobují hydration errors ve formulářích | Low | Vyřešeno | Viz sekce 8 - použít suppressHydrationWarning na input fields |
+| PAYLOAD-001 | ServerFunctionsProvider requires serverFunction prop | High | ✅ Vyřešeno | Viz sekce 11 - nutné přidat serverFunction, importMap do layout.tsx |
+| PAYLOAD-002 | Lokalizovaná data nelze předat jako objekt při create() | High | ✅ Vyřešeno | Viz sekce 11 - create v default locale, pak update pro další locales |
 
 ---
 
@@ -730,6 +732,205 @@ useEffect(() => setMounted(true), []);
 - [ ] Fallback strategie otestovány
 - [ ] Strukturované logy funkční
 - [ ] Alerting nastaven pro kritické chyby
+
+---
+
+## 11. Payload CMS 3.x + Next.js 15 - Kritické poznatky
+
+### 11.1 Payload Admin Panel Setup (PAYLOAD-001)
+
+**Problém:** Admin panel vrací 500 error s hláškou:
+```
+Error: ServerFunctionsProvider requires a serverFunction prop to be passed
+```
+
+**Příčina:** Payload 3.x vyžaduje explicitní `serverFunction` prop v admin layout pro Server Actions.
+
+**Řešení:** Aktualizovat `src/app/(payload)/layout.tsx`:
+
+```typescript
+import React from 'react';
+import { handleServerFunctions, RootLayout } from '@payloadcms/next/layouts';
+import { ServerFunctionClient } from 'payload';
+
+import config from '../../../payload.config';
+import { importMap } from './admin/importMap';
+import '@payloadcms/next/css';
+
+type Args = {
+  children: React.ReactNode;
+};
+
+// Kritické - musí být server function s 'use server'
+const serverFunction: ServerFunctionClient = async function (args) {
+  'use server';
+  return handleServerFunctions({
+    ...args,
+    config,
+    importMap,
+  });
+};
+
+export default function Layout({ children }: Args) {
+  return (
+    <RootLayout 
+      importMap={importMap} 
+      config={config} 
+      serverFunction={serverFunction}  // ← Toto je klíčové!
+    >
+      {children}
+    </RootLayout>
+  );
+}
+```
+
+**Kritické soubory:**
+- `src/app/(payload)/layout.tsx` - admin layout
+- `src/app/(payload)/admin/importMap.ts` - automaticky generovaný Payload importy
+
+### 11.2 Lokalizace dat v Payload CMS (PAYLOAD-002)
+
+**Problém:** Při `payload.create()` nelze předat lokalizovaná data jako objekt:
+```typescript
+// ❌ NEFUNGUJE - ValidationError: "This field is required"
+await payload.create({
+  collection: 'categories',
+  data: {
+    slug: 'traditional',
+    name: { cs: 'Tradiční', en: 'Traditional', he: 'מסורתי' }, // ← Chyba!
+  },
+});
+```
+
+**Příčina:** Payload očekává při `create()` prostý string pro lokalizované pole, ne objekt.
+
+**Řešení:** Vytvořit v default locale, pak aktualizovat ostatní:
+
+```typescript
+// ✅ SPRÁVNĚ - create + update pattern
+// 1. Vytvoření v default locale (cs)
+const created = await payload.create({
+  collection: 'categories',
+  data: { slug: 'traditional', name: 'Tradiční' },
+});
+
+// 2. Aktualizace EN locale
+await payload.update({
+  collection: 'categories',
+  id: created.id,
+  data: { name: 'Traditional' },
+  locale: 'en',
+});
+
+// 3. Aktualizace HE locale
+await payload.update({
+  collection: 'categories',
+  id: created.id,
+  data: { name: 'מסורתי' },
+  locale: 'he',
+});
+```
+
+**Poznámka k `locale: 'all'`:**
+- Parametr `locale: 'all'` funguje pro **čtení** dat, ne pro zápis
+- Při čtení vrací objekt se všemi locales
+- Při zápisu stále očekává prosté hodnoty
+
+### 11.3 Pole v arrays s lokalizovanými fields
+
+**Problém:** Array fields (např. `images` v Products) mohou mít lokalizovaná sub-fields (např. `alt`).
+
+```typescript
+// Products.images field definition:
+{
+  name: 'images',
+  type: 'array',
+  fields: [
+    { name: 'image', type: 'upload', relationTo: 'media' },
+    { name: 'alt', type: 'text', localized: true, required: true }, // ← Lokalizované!
+  ],
+}
+```
+
+**Řešení:** Při update pro jinou locale musíte znovu předat celé pole images:
+
+```typescript
+// Vytvoření produktu (CS)
+const product = await payload.create({
+  collection: 'products',
+  data: {
+    slug: 'eternal-love',
+    name: 'Věčná láska',
+    images: [{ image: imageId, alt: 'Ketuba Věčná láska', isMain: true }],
+    // ...
+  },
+});
+
+// Update EN - musíte předat images znovu s EN alt
+await payload.update({
+  collection: 'products',
+  id: product.id,
+  data: {
+    name: 'Eternal Love',
+    images: [{ image: imageId, alt: 'Ketubah Eternal Love', isMain: true }],
+  },
+  locale: 'en',
+});
+```
+
+### 11.4 dotenv v seed scriptech
+
+**Problém:** TypeScript seed script nenačítá `.env.local` automaticky.
+
+**Řešení:** 
+1. Zkopírovat `.env.local` na `.env`: `cp .env.local .env`
+2. V seed scriptu použít: `import 'dotenv/config';` na prvním řádku
+3. Nainstalovat dotenv: `npm install dotenv`
+
+---
+
+## 12. Lessons Learned pro příštího vývojáře
+
+### 12.1 Co funguje dobře
+
+1. **next-intl 4.x** - Lokalizace funguje skvěle, RTL podpora out of box
+2. **Payload CMS 3.x** - Po správném nastavení velmi produktivní
+3. **PostgreSQL adapter** - Stabilní, bez problémů
+4. **Lexical Editor** - Bohatý editor bez dodatečné konfigurace
+
+### 12.2 Na co si dát pozor
+
+| Oblast | Problém | Doporučení |
+|--------|---------|------------|
+| **Payload Admin** | ServerFunctions setup | Vždy kopírovat z oficiálních templates, ne psát od nuly |
+| **Lokalizace** | Create neakceptuje objekt | Vždy použít create + update pattern |
+| **Seed scripty** | dotenv nenačítá .env.local | Používat `.env` nebo `dotenv/config` import |
+| **Array fields** | Lokalizované sub-fields | Při locale update předat celé pole znovu |
+| **Next.js 15** | Async params/searchParams | Všechny dynamic routes musí být async |
+
+### 12.3 Doporučený workflow pro nové kolekce
+
+1. Definovat kolekci v `src/collections/`
+2. Přidat do `payload.config.ts`
+3. Spustit `npm run dev` - Payload vytvoří tabulky
+4. Napsat seed data s create + update pattern
+5. Testovat v admin panelu
+
+### 12.4 Užitečné příkazy
+
+```bash
+# Seed databázi
+npm run seed
+
+# Regenerovat Payload types
+npx payload generate:types
+
+# Kontrola databáze
+psql postgresql://elda:dev_password_123@localhost:5432/ketubah_eshop -c "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';"
+
+# Počet záznamů v tabulkách
+psql postgresql://elda:dev_password_123@localhost:5432/ketubah_eshop -c "SELECT 'products', count(*) FROM products UNION ALL SELECT 'categories', count(*) FROM categories;"
+```
 
 ---
 

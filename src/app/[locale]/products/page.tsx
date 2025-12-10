@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { ProductGrid } from '@/components/products/ProductGrid';
 import { Pagination } from '@/components/products/Pagination';
 import { getExchangeRates } from '@/lib/cnb';
+import { getProducts } from '@/lib/queries';
+import { Link } from '@/components/ui/Link';
 
 interface ProductsPageProps {
   params: Promise<{ locale: string }>;
@@ -27,57 +29,42 @@ export default async function ProductsPage({
   searchParams,
 }: ProductsPageProps) {
   const { locale } = await params;
-  const { page = '1', q, category: _category } = await searchParams;
-  const t = await getTranslations({ locale, namespace: 'products' });
+  const { page = '1', q, category } = await searchParams;
+  const t = await getTranslations({ locale, namespace: 'common' });
+  const tProducts = await getTranslations({ locale, namespace: 'products' });
 
   const currentPage = parseInt(page, 10) || 1;
 
-  // Načtení kurzů měn
-  const exchangeRates = await getExchangeRates();
+  // Paralelní načtení dat
+  const [exchangeRates, productsData] = await Promise.all([
+    getExchangeRates(),
+    getProducts({
+      locale,
+      page: currentPage,
+      limit: ITEMS_PER_PAGE,
+      category,
+      search: q,
+    }),
+  ]);
 
-  // TODO: Načtení produktů z Payload CMS
-  // Pro teď použijeme placeholder data
-  const mockProducts = Array.from({ length: 12 }, (_, i) => ({
-    slug: `ketubah-${i + 1}`,
-    name: `Ketubah ${i + 1}`,
-    shortDescription: `Krásná ručně malovaná ketuba s tradičními motivy. Každý kus je originál s možností personalizace.`,
-    prices: {
-      giclee: 5900 + i * 1000,
-      gicleeAvailable: true,
-      original: 15000 + i * 5000,
-      originalAvailable: i % 3 === 0,
-    },
-    images: [
-      {
-        image: { url: '/placeholder.jpg' },
-        alt: `Ketubah ${i + 1}`,
-        isMain: true,
-      },
-    ],
-  }));
-
-  // Paginace
-  const totalItems = mockProducts.length;
-  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedProducts = mockProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const { products, totalPages } = productsData;
 
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Breadcrumbs */}
       <nav className="text-sm text-muted mb-6">
-        <span>Domů</span>
+        <Link href="/" className="hover:text-text">{t('home')}</Link>
         <span className="mx-2">/</span>
-        <span className="font-medium text-text">{t('title')}</span>
+        <span className="font-medium text-text">{tProducts('title')}</span>
       </nav>
 
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">{t('title')}</h1>
+        <h1 className="text-3xl font-bold">{tProducts('title')}</h1>
 
         {/* TODO: Filtry */}
         <button className="border border-gray-300 px-4 py-2 rounded hover:bg-gray-50 transition-colors">
-          {t('filters')}
+          {tProducts('filters')}
         </button>
       </div>
 
@@ -89,9 +76,9 @@ export default async function ProductsPage({
       )}
 
       {/* Grid produktů */}
-      {paginatedProducts.length > 0 ? (
+      {products.length > 0 ? (
         <>
-          <ProductGrid products={paginatedProducts} exchangeRates={exchangeRates} />
+          <ProductGrid products={products} exchangeRates={exchangeRates} />
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
@@ -100,7 +87,7 @@ export default async function ProductsPage({
         </>
       ) : (
         <div className="text-center py-12">
-          <p className="text-muted text-lg">{t('noResults')}</p>
+          <p className="text-muted text-lg">{tProducts('noResults')}</p>
         </div>
       )}
     </div>

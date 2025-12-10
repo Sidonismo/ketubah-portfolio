@@ -6,73 +6,17 @@ import { ProductGrid } from '@/components/products/ProductGrid';
 import { Link } from '@/components/ui/Link';
 import { getExchangeRates } from '@/lib/cnb';
 import { formatConvertedPrice, getDefaultCurrency } from '@/lib/currency';
+import { getProductBySlug, getRelatedProducts } from '@/lib/queries';
 
 interface ProductPageProps {
   params: Promise<{ locale: string; slug: string }>;
-}
-
-// TODO: Načtení produktu z Payload CMS
-async function getProduct(slug: string, _locale: string) {
-  // Mock data pro teď
-  if (slug.startsWith('ketubah-')) {
-    const id = parseInt(slug.replace('ketubah-', ''), 10);
-    return {
-      slug,
-      name: `Jerusalem Ketubah ${id}`,
-      shortDescription: 'Tradiční ketuba s motivem Jeruzaléma, ručně malovaná temperovými barvami na pergamenu.',
-      description: '<p>Tato ketuba je inspirována starými jeruzalémskými motivy a kombinuje tradiční techniky s moderním designem. Každý kus je originál, ručně malovaný temperovými barvami.</p><p>Ketuba může být personalizována podle vašich požadavků - text, barvy, velikost.</p>',
-      prices: {
-        giclee: 5900 + id * 1000,
-        gicleeAvailable: true,
-        original: 15000 + id * 5000,
-        originalAvailable: id % 3 === 0,
-      },
-      dimensions: {
-        width: 50,
-        height: 70,
-        unit: 'cm',
-      },
-      images: [
-        { image: { url: '/placeholder.jpg', width: 1200, height: 900 }, alt: `${slug} - hlavní`, isMain: true },
-        { image: { url: '/placeholder.jpg', width: 1200, height: 900 }, alt: `${slug} - detail 1` },
-        { image: { url: '/placeholder.jpg', width: 1200, height: 900 }, alt: `${slug} - detail 2` },
-      ],
-      category: { name: 'Tradiční', slug: 'traditional' },
-      tags: [
-        { name: 'Jeruzalém', slug: 'jerusalem' },
-        { name: 'Tradiční', slug: 'traditional' },
-      ],
-      colors: [
-        { name: 'Zlatá', hexCode: '#FFD700' },
-        { name: 'Modrá', hexCode: '#1E40AF' },
-      ],
-    };
-  }
-  return null;
-}
-
-// TODO: Načtení souvisejících produktů
-async function getRelatedProducts(_categorySlug: string, _currentSlug: string) {
-  return Array.from({ length: 4 }, (_, i) => ({
-    slug: `ketubah-${i + 10}`,
-    name: `Related Ketubah ${i + 1}`,
-    prices: {
-      giclee: 5900 + i * 1000,
-      gicleeAvailable: true,
-      original: 15000 + i * 5000,
-      originalAvailable: i % 2 === 0,
-    },
-    images: [
-      { image: { url: '/placeholder.jpg' }, alt: `Related ${i + 1}`, isMain: true },
-    ],
-  }));
 }
 
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
-  const product = await getProduct(slug, locale);
+  const product = await getProductBySlug(slug, locale);
 
   if (!product) {
     return { title: 'Product not found' };
@@ -87,21 +31,27 @@ export async function generateMetadata({
 export default async function ProductPage({ params }: ProductPageProps) {
   const { locale, slug } = await params;
   const t = await getTranslations({ locale, namespace: 'products' });
+  const tCommon = await getTranslations({ locale, namespace: 'common' });
 
-  const product = await getProduct(slug, locale);
+  const product = await getProductBySlug(slug, locale);
   if (!product) {
     notFound();
   }
 
   const exchangeRates = await getExchangeRates();
   const currency = getDefaultCurrency(locale);
-  const relatedProducts = await getRelatedProducts(product.category.slug, slug);
+  const relatedProducts = await getRelatedProducts(
+    product.category?.slug || 'traditional',
+    slug,
+    locale,
+    4
+  );
 
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Breadcrumbs */}
       <nav className="text-sm text-muted mb-6">
-        <Link href="/" className="hover:text-text">Domů</Link>
+        <Link href="/" className="hover:text-text">{tCommon('home')}</Link>
         <span className="mx-2">/</span>
         <Link href="/products" className="hover:text-text">{t('title')}</Link>
         <span className="mx-2">/</span>
@@ -116,9 +66,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
         {/* Info */}
         <div>
           {/* Kategorie */}
-          <span className="inline-block bg-gray-100 text-sm px-3 py-1 rounded-full mb-4">
-            {product.category.name}
-          </span>
+          {product.category && (
+            <span className="inline-block bg-gray-100 text-sm px-3 py-1 rounded-full mb-4">
+              {product.category.name}
+            </span>
+          )}
 
           <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
 
@@ -195,13 +147,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </div>
 
       {/* Popis */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-4">{t('description')}</h2>
-        <div
-          className="prose max-w-none"
-          dangerouslySetInnerHTML={{ __html: product.description }}
-        />
-      </section>
+      {product.description && (
+        <section className="mb-12">
+          <h2 className="text-2xl font-bold mb-4">{t('description')}</h2>
+          <div
+            className="prose max-w-none"
+            dangerouslySetInnerHTML={{ __html: product.description }}
+          />
+        </section>
+      )}
 
       {/* Související produkty */}
       {relatedProducts.length > 0 && (

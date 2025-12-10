@@ -1,10 +1,20 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 import { withPayload } from '@payloadcms/next/withPayload';
+import path from 'path';
 
 const withNextIntl = createNextIntlPlugin('./src/lib/i18n.ts');
 
 const nextConfig: NextConfig = {
+  // Webpack konfigurace pro aliasy
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@payload-config': path.resolve(__dirname, './payload.config.ts'),
+    };
+    return config;
+  },
+
   // Bezpečnostní hlavičky
   headers: async () => [
     {

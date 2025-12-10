@@ -5,6 +5,7 @@ import { Inter, Noto_Sans_Hebrew } from 'next/font/google';
 import { locales, localeConfig, type Locale } from '@/config/locales';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { CookieConsent } from '@/components/ui/CookieConsent';
 import '../globals.css';
 
 // Konfigurace Google Fonts
@@ -48,6 +49,7 @@ export default async function LocaleLayout({
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
+          <CookieConsent />
         </NextIntlClientProvider>
       </body>
     </html>

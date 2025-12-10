@@ -47,6 +47,8 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URI || '',
+      // Explicitně vypnout SSL a heslo pro lokální vývoj
+      ssl: false,
     },
   }),
 
