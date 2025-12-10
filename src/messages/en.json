@@ -1,0 +1,80 @@
+{
+  "common": {
+    "home": "Home",
+    "products": "Portfolio",
+    "contact": "Contact",
+    "about": "About",
+    "faq": "FAQ",
+    "search": "Search",
+    "loading": "Loading...",
+    "error": "Error",
+    "tryAgain": "Try again",
+    "backToHome": "Back to home"
+  },
+  "home": {
+    "hero": {
+      "badge": "Latest work",
+      "title": "Ketubah Art Studio",
+      "description": "Original ketubot and highest quality Giclée prints",
+      "cta": "View portfolio"
+    },
+    "popular": {
+      "title": "Most popular ketubot",
+      "description": "Discover our most beloved works"
+    }
+  },
+  "products": {
+    "title": "Portfolio",
+    "filters": "Filters",
+    "category": "Category",
+    "colors": "Colors",
+    "tags": "Keywords",
+    "clearFilters": "Clear filters",
+    "noResults": "No products found",
+    "interested": "I'm interested",
+    "originalAvailable": "Original available",
+    "gicleePrice": "Giclée print",
+    "originalPrice": "Original",
+    "from": "from",
+    "dimensions": "Dimensions",
+    "description": "Description",
+    "relatedProducts": "Related ketubot"
+  },
+  "contact": {
+    "title": "Contact",
+    "name": "Name",
+    "email": "Email",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send",
+    "sending": "Sending...",
+    "success": "Message sent successfully",
+    "error": "Failed to send message",
+    "required": "This field is required",
+    "invalidEmail": "Invalid email address"
+  },
+  "cookies": {
+    "message": "This website uses cookies to improve your experience.",
+    "accept": "Accept all",
+    "decline": "Decline",
+    "learnMore": "Learn more"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The requested page does not exist or has been moved.",
+    "search": "Try searching"
+  },
+  "currency": {
+    "czk": "CZK",
+    "eur": "€",
+    "usd": "$"
+  },
+  "footer": {
+    "tagline": "Original ketubot and Giclée prints",
+    "links": "Links",
+    "legal": "Legal",
+    "privacy": "Privacy policy",
+    "cookies": "Cookies",
+    "copyright": "© {year} Ketubah Art Studio. All rights reserved."
+  }
+}

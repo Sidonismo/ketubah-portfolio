@@ -1,0 +1,80 @@
+{
+  "common": {
+    "home": "Domů",
+    "products": "Portfolio",
+    "contact": "Kontakt",
+    "about": "O mně",
+    "faq": "FAQ",
+    "search": "Hledat",
+    "loading": "Načítání...",
+    "error": "Chyba",
+    "tryAgain": "Zkusit znovu",
+    "backToHome": "Zpět na úvodní stránku"
+  },
+  "home": {
+    "hero": {
+      "badge": "Nejnovější práce",
+      "title": "Ketubah Art Studio",
+      "description": "Originální ketubot a Giclée tisky nejvyšší kvality",
+      "cta": "Prohlédnout portfolio"
+    },
+    "popular": {
+      "title": "Nejpopulárnější ketubot",
+      "description": "Objevte naše nejoblíbenější práce"
+    }
+  },
+  "products": {
+    "title": "Portfolio",
+    "filters": "Filtry",
+    "category": "Kategorie",
+    "colors": "Barvy",
+    "tags": "Klíčová slova",
+    "clearFilters": "Zrušit filtry",
+    "noResults": "Nebyly nalezeny žádné produkty",
+    "interested": "Mám zájem",
+    "originalAvailable": "Originál dostupný",
+    "gicleePrice": "Giclée tisk",
+    "originalPrice": "Originál",
+    "from": "od",
+    "dimensions": "Rozměry",
+    "description": "Popis",
+    "relatedProducts": "Související ketubot"
+  },
+  "contact": {
+    "title": "Kontakt",
+    "name": "Jméno",
+    "email": "E-mail",
+    "subject": "Předmět",
+    "message": "Zpráva",
+    "send": "Odeslat",
+    "sending": "Odesílání...",
+    "success": "Zpráva byla úspěšně odeslána",
+    "error": "Nepodařilo se odeslat zprávu",
+    "required": "Toto pole je povinné",
+    "invalidEmail": "Neplatná e-mailová adresa"
+  },
+  "cookies": {
+    "message": "Tento web používá cookies pro zlepšení vašeho zážitku.",
+    "accept": "Přijmout vše",
+    "decline": "Odmítnout",
+    "learnMore": "Více informací"
+  },
+  "notFound": {
+    "title": "Stránka nenalezena",
+    "description": "Požadovaná stránka neexistuje nebo byla přesunuta.",
+    "search": "Zkuste vyhledat"
+  },
+  "currency": {
+    "czk": "Kč",
+    "eur": "€",
+    "usd": "$"
+  },
+  "footer": {
+    "tagline": "Originální ketubot a Giclée tisky",
+    "links": "Odkazy",
+    "legal": "Právní informace",
+    "privacy": "Ochrana soukromí",
+    "cookies": "Cookies",
+    "copyright": "© {year} Ketubah Art Studio. Všechna práva vyhrazena."
+  }
+}

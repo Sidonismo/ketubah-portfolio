@@ -1,26 +1,56 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Primární barvy podle PRD */
+  --color-primary: #FFE500;
+  --color-primary-hover: #E6CE00;
+  --color-text: #1A1A1A;
+  --color-text-muted: #6B7280;
+  --color-background: #FFFFFF;
+  --color-footer: #1A1A1A;
+  --color-card-bg: #F5F5F5;
+  --color-frame: #000000;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-text: var(--color-text);
+  --color-muted: var(--color-text-muted);
+  --color-background: var(--color-background);
+  --color-footer: var(--color-footer);
+  --color-card-bg: var(--color-card-bg);
+  --color-frame: var(--color-frame);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* RTL podpora pro hebrejštinu */
+.font-hebrew {
+  font-family: 'Noto Sans Hebrew', system-ui, sans-serif;
+}
+
+/* Utility třídy */
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.hover\:bg-primary-hover:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}
+
+.bg-card-bg {
+  background-color: var(--color-card-bg);
+}
+
+.bg-footer {
+  background-color: var(--color-footer);
 }

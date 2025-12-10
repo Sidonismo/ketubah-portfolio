@@ -1,0 +1,80 @@
+{
+  "common": {
+    "home": "בית",
+    "products": "תיק עבודות",
+    "contact": "צור קשר",
+    "about": "אודות",
+    "faq": "שאלות נפוצות",
+    "search": "חיפוש",
+    "loading": "טוען...",
+    "error": "שגיאה",
+    "tryAgain": "נסה שוב",
+    "backToHome": "חזרה לדף הבית"
+  },
+  "home": {
+    "hero": {
+      "badge": "עבודה אחרונה",
+      "title": "סטודיו לאמנות כתובה",
+      "description": "כתובות מקוריות והדפסי ג'יקלה באיכות הגבוהה ביותר",
+      "cta": "צפייה בתיק העבודות"
+    },
+    "popular": {
+      "title": "הכתובות הפופולריות ביותר",
+      "description": "גלו את העבודות האהובות ביותר שלנו"
+    }
+  },
+  "products": {
+    "title": "תיק עבודות",
+    "filters": "מסננים",
+    "category": "קטגוריה",
+    "colors": "צבעים",
+    "tags": "מילות מפתח",
+    "clearFilters": "נקה מסננים",
+    "noResults": "לא נמצאו מוצרים",
+    "interested": "אני מעוניין",
+    "originalAvailable": "מקור זמין",
+    "gicleePrice": "הדפס ג'יקלה",
+    "originalPrice": "מקור",
+    "from": "מ-",
+    "dimensions": "מידות",
+    "description": "תיאור",
+    "relatedProducts": "כתובות קשורות"
+  },
+  "contact": {
+    "title": "צור קשר",
+    "name": "שם",
+    "email": "אימייל",
+    "subject": "נושא",
+    "message": "הודעה",
+    "send": "שלח",
+    "sending": "שולח...",
+    "success": "ההודעה נשלחה בהצלחה",
+    "error": "שליחת ההודעה נכשלה",
+    "required": "שדה זה הוא חובה",
+    "invalidEmail": "כתובת אימייל לא תקינה"
+  },
+  "cookies": {
+    "message": "אתר זה משתמש בעוגיות כדי לשפר את החוויה שלך.",
+    "accept": "קבל הכל",
+    "decline": "דחה",
+    "learnMore": "למידע נוסף"
+  },
+  "notFound": {
+    "title": "הדף לא נמצא",
+    "description": "הדף המבוקש אינו קיים או הועבר.",
+    "search": "נסה לחפש"
+  },
+  "currency": {
+    "czk": "CZK",
+    "eur": "€",
+    "usd": "$"
+  },
+  "footer": {
+    "tagline": "כתובות מקוריות והדפסי ג'יקלה",
+    "links": "קישורים",
+    "legal": "משפטי",
+    "privacy": "מדיניות פרטיות",
+    "cookies": "עוגיות",
+    "copyright": "© {year} סטודיו לאמנות כתובה. כל הזכויות שמורות."
+  }
+}
