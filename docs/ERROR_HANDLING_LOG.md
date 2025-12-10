@@ -205,24 +205,24 @@ export class UnauthorizedError extends AppError {
 | Endpoint | Metoda | Účel | Status |
 |----------|--------|------|--------|
 | `/api/contact` | POST | Kontaktní formulář (Resend email) | ✅ Implementováno |
+| `/api/search` | GET | Vyhledávání (fallback na PostgreSQL) | ✅ Implementováno |
+| `/api/cron/exchange-rates` | GET | Aktualizace kurzů ČNB | ✅ Implementováno |
 
 **Implementované frontend routes:**
 
 | Route | Soubor | Účel | Status |
 |-------|--------|------|--------|
 | `/[locale]` | `app/[locale]/page.tsx` | Homepage | ✅ Implementováno |
-| `/[locale]/products` | `app/[locale]/products/page.tsx` | Seznam produktů | ✅ Implementováno |
+| `/[locale]/products` | `app/[locale]/products/page.tsx` | Seznam produktů s filtry | ✅ Implementováno |
 | `/[locale]/products/[slug]` | `app/[locale]/products/[slug]/page.tsx` | Detail produktu | ✅ Implementováno |
 | `/[locale]/contact` | `app/[locale]/contact/page.tsx` | Kontaktní formulář | ✅ Implementováno |
+| `/[locale]/[slug]` | `app/[locale]/[slug]/page.tsx` | Dynamické stránky (about, faq, cookies) | ✅ Implementováno |
 
 **Chybějící endpointy (dle PRD):**
 
 | Endpoint | Metoda | Účel | Status |
 |----------|--------|------|--------|
-| `/api/search` | GET | Meilisearch vyhledávání | ❌ TBD |
-| `/api/cron/exchange-rates` | GET | Aktualizace kurzů ČNB | ❌ TBD |
-| `/api/health` | GET | Health check endpoint | ❌ TBD |
-| `/[locale]/[slug]` | - | Dynamické stránky (about, faq, cookies) | ❌ TBD |
+| `/api/health` | GET | Health check endpoint | ❌ TBD (nice-to-have) |
 
 **Doporučení:** Implementovat `/api/health` endpoint pro monitoring dostupnosti služeb:
 

@@ -1787,8 +1787,13 @@ Tento log obsahuje:
 ---
 
 *Dokument vytvořen: 2024*
-*Verze: 1.4*
+*Verze: 1.5*
 *Poslední aktualizace: 2025-12-10*
+
+### Changelog v1.5:
+- Aktualizován stav implementace v sekci 20.6
+- Přidány dokončené položky: Cookie Consent, Filtry produktů, Stránky CMS, Sharp
+- Aktualizována doporučení pro další vývoj v sekci 20.7
 
 ### Changelog v1.4:
 - **KRITICKÉ:** Přidána sekce 20 - Implementation Notes pro budoucí vývojáře
@@ -1961,14 +1966,15 @@ npm install sharp
 | Lokalizace | cs, en, he | ✅ Funguje včetně RTL |
 | Admin panel | /admin | ✅ Opraveno, funkční |
 | Seed data | Testovací data | ✅ 13 produktů, 4 kategorie, 12 barev/tagů |
-| Meilisearch | Vyhledávání | ⏳ Nakonfigurováno, nutné spustit container |
-| Cookie Consent | GDPR banner | ⏳ Komponenta existuje, nutné integrovat |
-| Filtry produktů | Kategorie/barvy/tagy | ⏳ Nutné implementovat |
+| Meilisearch | Vyhledávání | ⏳ Nakonfigurováno, vyžaduje Docker |
+| Cookie Consent | GDPR banner | ✅ Integrováno do layoutu |
+| Filtry produktů | Kategorie | ✅ ProductFilters komponenta |
+| Stránky CMS | Dynamické stránky | ✅ Napojeno s fallback na mock data |
+| Sharp | Image resizing | ✅ Nakonfigurováno v payload.config.ts |
 
 ### 20.7 Doporučení pro další vývoj
 
-1. **Meilisearch:** Spustit Docker container, implementovat sync hooks
-2. **Filtry:** Přidat query params `/products?category=traditional&color=gold`
-3. **Stránky CMS:** Napojit `/[locale]/[slug]` na Pages kolekci
-4. **Sharp:** Nainstalovat pro image resizing v produkci
-5. **Monitoring:** Přidat Sentry pro error tracking
+1. **Meilisearch:** Spustit Docker container, implementovat sync hooks (fallback na PostgreSQL LIKE funguje)
+2. **Filtry rozšíření:** Přidat filtrování podle barev a tagů (kategorie hotové)
+3. **Monitoring:** Přidat Sentry pro error tracking
+4. **GA4:** Integrovat Google Analytics s Consent Mode
