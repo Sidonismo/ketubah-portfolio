@@ -17,6 +17,7 @@ interface ProductFiltersProps {
     all: string;
     category: string;
   };
+  resultsCount?: number;
 }
 
 export function ProductFilters({
@@ -24,6 +25,7 @@ export function ProductFilters({
   selectedCategory,
   locale,
   labels,
+  resultsCount,
 }: ProductFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -40,6 +42,13 @@ export function ProductFilters({
 
     // Reset na první stránku při změně filtru
     params.delete('page');
+
+    // Pokud je málo výsledků (< 7) a existuje vyhledávací query, zrušíme ji
+    const hasSearchQuery = params.has('q');
+    const fewResults = resultsCount !== undefined && resultsCount < 7;
+    if (hasSearchQuery && fewResults) {
+      params.delete('q');
+    }
 
     startTransition(() => {
       router.push(`/${locale}/products?${params.toString()}`);

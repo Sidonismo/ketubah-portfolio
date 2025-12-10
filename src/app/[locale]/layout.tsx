@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -6,6 +7,7 @@ import { locales, localeConfig, type Locale } from '@/config/locales';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { CookieConsent } from '@/components/ui/CookieConsent';
+import { NavigationProgress } from '@/components/ui/NavigationProgress';
 import '../globals.css';
 
 // Konfigurace Google Fonts
@@ -46,6 +48,9 @@ export default async function LocaleLayout({
     <html lang={locale} dir={dir} className={`${inter.variable} ${notoSansHebrew.variable}`}>
       <body className={`${dir === 'rtl' ? 'font-hebrew' : 'font-sans'} flex flex-col min-h-screen antialiased`}>
         <NextIntlClientProvider messages={messages}>
+          <Suspense fallback={null}>
+            <NavigationProgress />
+          </Suspense>
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />

@@ -73,6 +73,7 @@ export default async function ProductsPage({
             all: tProducts('allCategories'),
             category: tProducts('category'),
           }}
+          resultsCount={products.length}
         />
       </div>
 

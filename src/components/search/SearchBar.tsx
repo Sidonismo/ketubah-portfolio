@@ -10,46 +10,36 @@ export function SearchBar() {
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Cleanup timeout on unmount
+  // Zavření při kliknutí mimo
   useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
       }
     };
-  }, []);
 
-  const handleInputChange = (value: string) => {
-    setQuery(value);
-
-    // Debounced navigation
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
     }
 
-    if (value.trim()) {
-      timeoutRef.current = setTimeout(() => {
-        router.push(`/${locale}/products?q=${encodeURIComponent(value.trim())}`);
-        setIsOpen(false);
-      }, 300);
-    }
-  };
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
     if (query.trim()) {
       router.push(`/${locale}/products?q=${encodeURIComponent(query.trim())}`);
       setIsOpen(false);
+      setQuery('');
     }
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={containerRef}>
       {/* Search button (collapsed) */}
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -80,7 +70,7 @@ export function SearchBar() {
           <input
             type="search"
             value={query}
-            onChange={(e) => handleInputChange(e.target.value)}
+            onChange={(e) => setQuery(e.target.value)}
             placeholder={t('search')}
             className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
             autoFocus

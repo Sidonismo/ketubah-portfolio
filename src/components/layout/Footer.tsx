@@ -3,6 +3,7 @@ import { Link } from '@/components/ui/Link';
 
 export function Footer() {
   const t = useTranslations('footer');
+  const tCommon = useTranslations('common');
   const currentYear = new Date().getFullYear();
 
   return (
@@ -20,13 +21,13 @@ export function Footer() {
             <h4 className="font-semibold mb-4">{t('links')}</h4>
             <nav className="flex flex-col gap-2">
               <Link href="/about" className="text-gray-400 hover:text-white transition-colors">
-                O mně
+                {tCommon('about')}
               </Link>
               <Link href="/faq" className="text-gray-400 hover:text-white transition-colors">
-                FAQ
+                {tCommon('faq')}
               </Link>
               <Link href="/contact" className="text-gray-400 hover:text-white transition-colors">
-                Kontakt
+                {tCommon('contact')}
               </Link>
             </nav>
           </div>
