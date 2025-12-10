@@ -191,13 +191,13 @@ a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8
 
 ```env
 DATABASE_URI=postgresql://elda:dev_password_123@localhost:5432/ketubah_eshop
-PAYLOAD_SECRET=a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8
+PAYLOAD_SECRET=
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 MEILISEARCH_HOST=http://localhost:7700
 MEILISEARCH_ADMIN_KEY=masterKey
 MEILISEARCH_SEARCH_KEY=searchOnlyKey
-RESEND_API_KEY=re_Sb66ejh7_DjhtkM8E6jDAHzTzutDYX6yK
-CONTACT_EMAIL=sidonismo@gmail.com
+RESEND_API_KEY=re_...
+CONTACT_EMAIL=email
 ```
 
 ### Diagnostika a debugging
