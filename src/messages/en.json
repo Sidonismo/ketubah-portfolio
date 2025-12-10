@@ -26,6 +26,7 @@
   "products": {
     "title": "Portfolio",
     "filters": "Filters",
+    "allCategories": "All",
     "category": "Category",
     "colors": "Colors",
     "tags": "Keywords",

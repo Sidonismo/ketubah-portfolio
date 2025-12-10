@@ -1,9 +1,10 @@
 import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { ProductGrid } from '@/components/products/ProductGrid';
+import { ProductFilters } from '@/components/products/ProductFilters';
 import { Pagination } from '@/components/products/Pagination';
 import { getExchangeRates } from '@/lib/cnb';
-import { getProducts } from '@/lib/queries';
+import { getProducts, getCategories } from '@/lib/queries';
 import { Link } from '@/components/ui/Link';
 
 interface ProductsPageProps {
@@ -36,7 +37,7 @@ export default async function ProductsPage({
   const currentPage = parseInt(page, 10) || 1;
 
   // Paralelní načtení dat
-  const [exchangeRates, productsData] = await Promise.all([
+  const [exchangeRates, productsData, categories] = await Promise.all([
     getExchangeRates(),
     getProducts({
       locale,
@@ -45,6 +46,7 @@ export default async function ProductsPage({
       category,
       search: q,
     }),
+    getCategories(locale),
   ]);
 
   const { products, totalPages } = productsData;
@@ -59,13 +61,19 @@ export default async function ProductsPage({
       </nav>
 
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">{tProducts('title')}</h1>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-6">{tProducts('title')}</h1>
 
-        {/* TODO: Filtry */}
-        <button className="border border-gray-300 px-4 py-2 rounded hover:bg-gray-50 transition-colors">
-          {tProducts('filters')}
-        </button>
+        {/* Filtry kategorií */}
+        <ProductFilters
+          categories={categories}
+          selectedCategory={category}
+          locale={locale}
+          labels={{
+            all: tProducts('allCategories'),
+            category: tProducts('category'),
+          }}
+        />
       </div>
 
       {/* Vyhledávací dotaz */}

@@ -1,4 +1,31 @@
+## 2025-12-10: Build error - chybějící importMap
+
+**Chyba:**
+- Build selhal kvůli chybějícímu prop importMap v komponentě RootPage v admin routě
+
+**Plán:**
+- Doplnit prop importMap do volání RootPage (importovat z ./admin/importMap.js)
+## 2025-12-10: Build error - typování admin routy
+
+**Chyba:**
+- Build selhal kvůli typu v src/app/(payload)/admin/[[...segments]]/page.tsx
+- Komponenta RootPage očekává props typu Promise<{ segments: string[] }>, ale předává se objekt { segments: string[] }
+
+**Plán:**
+- Opravit typování props v admin routě podle očekávání Next.js/RootPage
 # Development Log - Ketubah Eshop
+
+## 2025-12-10: Testování a build error
+
+**Pokusy o testování admin panelu:**
+- Přidána unit testovací infrastruktura (Jest, Testing Library, Babel, ts-jest)
+- Test selhal kvůli nemožnosti importovat @payloadcms/next/admin v testovacím prostředí
+- Odstraněna Babel konfigurace a všechny testovací závislosti (npm uninstall, smazání babel.config.js)
+- Build Next.js selhal kvůli neexportované cestě @payloadcms/next/admin
+
+**Plánované kroky:**
+- Opravit soubor src/app/(payload)/admin/[[...segments]]/page.tsx na původní verzi s použitím RootPage z @payloadcms/next/views
+- Ověřit build a funkčnost admin panelu v reálném běhu aplikace
 
 > Průběžný záznam vývoje projektu
 
@@ -379,4 +406,92 @@ URL: http://localhost:3000/admin
 
 ---
 
-*Poslední aktualizace: 2025-12-10 14:00*
+## 2025-12-10: Oprava build chyb ✅
+
+### Opravené problémy
+
+**1. Syntaktická chyba v admin page**
+- Soubor: `src/app/(payload)/admin/[[...segments]]/page.tsx`
+- Problém: Chyběla definice funkce `Page`, zůstal pouze osamocený `return` statement
+- Řešení: Přidána správná definice komponenty `Page` s exportem
+
+**2. Špatná cesta importu importMap**
+- Problém: Import `./importMap` místo `../importMap`
+- Řešení: Opravena relativní cesta importu
+
+**3. Unused parametr `_locale` v queries.ts**
+- Soubor: `src/lib/queries.ts`
+- Problém: Funkce `serializeProduct` přijímala nevyužitý parametr `locale`
+- Řešení: Parametr odstraněn z funkce a všech volání (celkem 5 míst)
+
+**4. ESLint warning v generateMetadata**
+- Soubor: `src/app/(payload)/admin/[[...segments]]/page.tsx`
+- Problém: Parametr `_args` hlášen jako unused
+- Řešení: Přidán `// eslint-disable-next-line` komentář
+
+**5. Sharp warning pro image resizing**
+- Soubor: `payload.config.ts`
+- Problém: Payload CMS hlásil, že sharp není předán do konfigurace
+- Řešení: Přidán import `sharp` a konfigurace `sharp` v `buildConfig()`
+
+### Výsledek
+
+Build nyní prochází čistě bez chyb a bez varování:
+```
+✓ Compiled successfully in 42s
+✓ Generating static pages (30/30)
+```
+
+---
+
+## 2025-12-10: Implementace filtrů a napojení na CMS ✅
+
+### Filtry produktů
+
+**Vytvořeno:**
+- `src/components/products/ProductFilters.tsx` - klientská komponenta pro filtrování podle kategorií
+- Přidány překlady `allCategories` do všech jazyků (cs/en/he)
+
+**Funkcionalita:**
+- Tlačítka pro výběr kategorie (Vše / Tradiční / Moderní / Abstraktní / Personalizované)
+- URL parametr `?category=slug` pro deep linking
+- Reset na první stránku při změně filtru
+- Transition loading state během změny filtru
+
+**Integrace:**
+- Upravena stránka `/[locale]/products/page.tsx`
+- Paralelní načítání kategorií s produkty a kurzy
+
+### Napojení stránek na CMS
+
+**Nové funkce v queries.ts:**
+- `getPageBySlug(slug, locale)` - načte stránku z Payload CMS
+- `getAllPageSlugs()` - načte všechny slug pro generateStaticParams
+- `PageData` interface pro typování
+
+**Upravená stránka [slug]:**
+- Primárně načítá data z Payload CMS
+- Fallback na mock data pokud CMS není dostupné
+- `generateStaticParams` načítá slug z CMS
+
+### CookieConsent
+
+- Komponenta již byla integrována do layoutu (`src/app/[locale]/layout.tsx`)
+- Používá `useSyncExternalStore` pro hydration-safe čtení cookie stavu
+
+### Meilisearch
+
+- ⏳ Odloženo - vyžaduje Docker, který není dostupný v aktuálním prostředí
+- Fallback vyhledávání přes PostgreSQL LIKE je funkční
+
+### Výsledek
+
+Build prošel bez chyb:
+```
+✓ Compiled successfully in 43s
+✓ Generating static pages (30/30)
+```
+
+---
+
+*Poslední aktualizace: 2025-12-10 15:45*

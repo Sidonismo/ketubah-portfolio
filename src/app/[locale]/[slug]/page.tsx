@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Link } from '@/components/ui/Link';
 import { FAQJsonLd } from '@/components/seo/FAQJsonLd';
+import { getPageBySlug, getAllPageSlugs, type PageData } from '@/lib/queries';
 
 interface PageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -11,15 +12,20 @@ interface PageProps {
 // Rezervované cesty - tyto slug nebudou zpracovány touto routou
 const RESERVED_SLUGS = ['products', 'contact', 'admin', 'api'];
 
-// Mock funkce pro načtení stránky z Payload CMS
-// TODO: Napojit na Payload CMS
-async function getPage(slug: string, locale: string) {
+// Funkce pro načtení stránky - zkusí Payload CMS, pak fallback na mock data
+async function getPage(slug: string, locale: string): Promise<PageData | null> {
   // Kontrola rezervovaných cest
   if (RESERVED_SLUGS.includes(slug)) {
     return null;
   }
 
-  // Mock data pro základní stránky
+  // Zkusit načíst z Payload CMS
+  const cmsPage = await getPageBySlug(slug, locale);
+  if (cmsPage) {
+    return cmsPage;
+  }
+
+  // Fallback na mock data pro základní stránky
   const mockPages: Record<string, {
     title: Record<string, string>;
     slug: string;
@@ -268,8 +274,10 @@ async function getPage(slug: string, locale: string) {
   }
 
   return {
-    ...page,
+    id: slug,
     title: page.title[locale] || page.title.en,
+    slug: page.slug,
+    pageType: page.pageType,
     content: page.content[locale] || page.content.en,
     faqItems: page.faqItems?.map((item) => ({
       question: item.question[locale] || item.question.en,
@@ -286,7 +294,9 @@ async function getPage(slug: string, locale: string) {
 
 // Generování statických parametrů pro všechny stránky
 export async function generateStaticParams() {
-  const slugs = ['about', 'faq', 'privacy', 'cookies'];
+  // Zkusit načíst z CMS, jinak fallback
+  const cmsSlugs = await getAllPageSlugs();
+  const slugs = cmsSlugs.length > 0 ? cmsSlugs : ['about', 'faq', 'privacy', 'cookies'];
   return slugs.map((slug) => ({ slug }));
 }
 

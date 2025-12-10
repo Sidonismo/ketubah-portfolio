@@ -3,6 +3,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import sharp from 'sharp';
 
 import {
   Users,
@@ -70,4 +71,7 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'src/payload-types.ts'),
   },
+
+  // Sharp pro image resizing
+  sharp,
 });

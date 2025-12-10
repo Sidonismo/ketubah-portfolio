@@ -26,6 +26,7 @@
   "products": {
     "title": "תיק עבודות",
     "filters": "מסננים",
+    "allCategories": "הכל",
     "category": "קטגוריה",
     "colors": "צבעים",
     "tags": "מילות מפתח",

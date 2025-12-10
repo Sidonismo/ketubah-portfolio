@@ -60,7 +60,7 @@ export interface PaginatedProducts {
 }
 
 // Pomocná funkce pro serializaci Payload dat
-function serializeProduct(doc: Record<string, unknown>, _locale: string): Product {
+function serializeProduct(doc: Record<string, unknown>): Product {
   // Extrakce hlavního obrázku z images array
   const images = (doc.images as Array<Record<string, unknown>> || []).map((img) => {
     const imageData = img.image as Record<string, unknown> | undefined;
@@ -273,7 +273,7 @@ export async function getProducts(options: {
     });
 
     return {
-      products: result.docs.map((doc) => serializeProduct(doc as Record<string, unknown>, locale)),
+      products: result.docs.map((doc) => serializeProduct(doc as Record<string, unknown>)),
       totalItems: result.totalDocs,
       totalPages: result.totalPages,
       currentPage: result.page || page,
@@ -316,7 +316,7 @@ export async function getProductBySlug(
       return null;
     }
 
-    return serializeProduct(result.docs[0] as Record<string, unknown>, locale);
+    return serializeProduct(result.docs[0] as Record<string, unknown>);
   } catch (error) {
     console.error('Error fetching product from Payload:', error);
     // Fallback na mock data
@@ -347,7 +347,7 @@ export async function getPopularProducts(
       sort: '-popularity',
     });
 
-    return result.docs.map((doc) => serializeProduct(doc as Record<string, unknown>, locale));
+    return result.docs.map((doc) => serializeProduct(doc as Record<string, unknown>));
   } catch (error) {
     console.error('Error fetching popular products:', error);
     // Fallback na mock data s nejvyšší popularitou
@@ -382,7 +382,7 @@ export async function getRelatedProducts(
       sort: '-popularity',
     });
 
-    return result.docs.map((doc) => serializeProduct(doc as Record<string, unknown>, locale));
+    return result.docs.map((doc) => serializeProduct(doc as Record<string, unknown>));
   } catch (error) {
     console.error('Error fetching related products:', error);
     // Fallback na mock data
@@ -417,5 +417,116 @@ export async function getCategories(locale: string) {
       { id: '2', name: 'Moderní', slug: 'modern' },
       { id: '3', name: 'Minimalistické', slug: 'minimalist' },
     ];
+  }
+}
+
+/**
+ * Typy pro stránky
+ */
+export interface PageData {
+  id: string;
+  title: string;
+  slug: string;
+  pageType: 'default' | 'faq' | 'legal';
+  content: string;
+  faqItems?: Array<{
+    question: string;
+    answer: string;
+  }>;
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+  };
+}
+
+/**
+ * Načtení stránky podle slug
+ */
+export async function getPageBySlug(
+  slug: string,
+  locale: string
+): Promise<PageData | null> {
+  try {
+    const payload = await getPayloadClient();
+
+    const result = await payload.find({
+      collection: 'pages',
+      where: {
+        slug: { equals: slug },
+      },
+      depth: 1,
+      locale: locale as 'cs' | 'en' | 'he',
+      limit: 1,
+    });
+
+    if (result.docs.length === 0) {
+      return null;
+    }
+
+    const doc = result.docs[0] as Record<string, unknown>;
+
+    // Převod obsahu (RichText nebo string)
+    let content = '';
+    if (typeof doc.content === 'string') {
+      content = doc.content;
+    } else if (doc.content && typeof doc.content === 'object') {
+      content = richTextToHtml(doc.content);
+    }
+
+    // Zpracování FAQ items
+    const faqItemsData = doc.faqItems as Array<Record<string, unknown>> | undefined;
+    const faqItems = faqItemsData?.map((item) => {
+      let answer = '';
+      if (typeof item.answer === 'string') {
+        answer = item.answer;
+      } else if (item.answer && typeof item.answer === 'object') {
+        answer = richTextToHtml(item.answer);
+      }
+      return {
+        question: item.question as string || '',
+        answer,
+      };
+    });
+
+    // SEO data
+    const seoData = doc.seo as Record<string, unknown> | undefined;
+
+    return {
+      id: doc.id as string,
+      title: doc.title as string || '',
+      slug: doc.slug as string || '',
+      pageType: (doc.pageType as 'default' | 'faq' | 'legal') || 'default',
+      content,
+      faqItems,
+      seo: seoData
+        ? {
+            metaTitle: seoData.metaTitle as string | undefined,
+            metaDescription: seoData.metaDescription as string | undefined,
+          }
+        : undefined,
+    };
+  } catch (error) {
+    console.error('Error fetching page from Payload:', error);
+    return null;
+  }
+}
+
+/**
+ * Načtení všech slug stránek pro generateStaticParams
+ */
+export async function getAllPageSlugs(): Promise<string[]> {
+  try {
+    const payload = await getPayloadClient();
+
+    const result = await payload.find({
+      collection: 'pages',
+      limit: 100,
+      depth: 0,
+    });
+
+    return result.docs.map((doc) => doc.slug as string);
+  } catch (error) {
+    console.error('Error fetching page slugs:', error);
+    return ['about', 'faq', 'privacy', 'cookies'];
   }
 }
