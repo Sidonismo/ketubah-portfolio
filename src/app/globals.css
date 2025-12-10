@@ -26,12 +26,17 @@
 body {
   background: var(--color-background);
   color: var(--color-text);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
 }
 
 /* RTL podpora pro hebrejštinu */
 .font-hebrew {
-  font-family: 'Noto Sans Hebrew', system-ui, sans-serif;
+  font-family: var(--font-hebrew), 'Noto Sans Hebrew', system-ui, sans-serif;
+}
+
+/* Latin fonty */
+.font-sans {
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
 }
 
 /* Utility třídy */

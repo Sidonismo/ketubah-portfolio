@@ -85,7 +85,7 @@ export default function ContactPage() {
           />
 
           {/* Jméno */}
-          <div>
+          <div suppressHydrationWarning>
             <label htmlFor="name" className="block font-medium mb-2">
               {t('name')} *
             </label>
@@ -98,12 +98,14 @@ export default function ContactPage() {
               required
               minLength={2}
               maxLength={100}
+              autoComplete="name"
               className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+              suppressHydrationWarning
             />
           </div>
 
           {/* Email */}
-          <div>
+          <div suppressHydrationWarning>
             <label htmlFor="email" className="block font-medium mb-2">
               {t('email')} *
             </label>
@@ -114,12 +116,14 @@ export default function ContactPage() {
               value={formData.email}
               onChange={handleChange}
               required
+              autoComplete="email"
               className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+              suppressHydrationWarning
             />
           </div>
 
           {/* Předmět */}
-          <div>
+          <div suppressHydrationWarning>
             <label htmlFor="subject" className="block font-medium mb-2">
               {t('subject')} *
             </label>
@@ -132,12 +136,14 @@ export default function ContactPage() {
               required
               minLength={5}
               maxLength={200}
+              autoComplete="off"
               className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+              suppressHydrationWarning
             />
           </div>
 
           {/* Zpráva */}
-          <div>
+          <div suppressHydrationWarning>
             <label htmlFor="message" className="block font-medium mb-2">
               {t('message')} *
             </label>
@@ -150,7 +156,9 @@ export default function ContactPage() {
               minLength={10}
               maxLength={5000}
               rows={6}
-              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary resize-y"
+              autoComplete="off"
+              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+              suppressHydrationWarning
             />
           </div>
 

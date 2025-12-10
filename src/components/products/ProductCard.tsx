@@ -11,6 +11,7 @@ interface ProductCardProps {
   product: {
     slug: string;
     name: string;
+    shortDescription?: string;
     prices: {
       giclee?: number;
       gicleeAvailable?: boolean;
@@ -77,18 +78,17 @@ export function ProductCard({ product, exchangeRates }: ProductCardProps) {
           </h3>
         </Link>
 
-        {lowestPrice && (
-          <p className="text-sm text-muted mb-3">
-            {t('from')} <span className="font-bold text-text">{formatConvertedPrice(lowestPrice, currency, exchangeRates)}</span>
+        {product.shortDescription && (
+          <p className="text-sm text-muted mb-2 line-clamp-2">
+            {product.shortDescription}
           </p>
         )}
 
-        <Link
-          href={`/contact?product=${product.slug}`}
-          className="block w-full bg-primary text-black text-center py-2 rounded font-medium hover:bg-primary-hover transition-colors"
-        >
-          {t('interested')}
-        </Link>
+        {lowestPrice && (
+          <p className="text-sm text-muted">
+            {t('from')} <span className="font-bold text-text">{formatConvertedPrice(lowestPrice, currency, exchangeRates)}</span>
+          </p>
+        )}
       </div>
     </div>
   );

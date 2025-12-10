@@ -615,7 +615,99 @@ export default function RootNotFound() {
 
 ---
 
-## 8. Aktuální známé problémy
+## 8. Hydration Errors
+
+> **Důležité:** Hydration errors vznikají, když se server-rendered HTML liší od client-rendered verze.
+
+### 8.1 Problém: Browser Extensions modifikují DOM
+
+**Symptomy:**
+- Hydration error ve formulářích
+- Chyba: "Hydration failed because the server rendered HTML didn't match the client"
+- Viditelné v polích s `type="email"` nebo `type="password"`
+
+**Příčina:**
+Browser extensions (zejména password managery jako 1Password, LastPass, Bitwarden) přidávají do input polí:
+- Ikonky/tlačítka pro automatické vyplnění
+- Skryté prvky pro detekci polí
+- Inline styles a atributy
+
+To způsobuje nesoulad mezi server HTML a client HTML.
+
+### 8.2 Řešení
+
+**1. Suppress Hydration Warning na input fields:**
+
+```typescript
+// ✅ Správně - s suppressHydrationWarning
+<div suppressHydrationWarning>
+  <label htmlFor="email">Email *</label>
+  <input
+    type="email"
+    id="email"
+    name="email"
+    value={formData.email}
+    onChange={handleChange}
+    autoComplete="email"
+    suppressHydrationWarning
+  />
+</div>
+```
+
+**2. Explicitní autocomplete atributy:**
+
+```typescript
+// Pomáhá browser extensionům správně identifikovat pole
+autoComplete="email"      // Pro email
+autoComplete="name"       // Pro jméno
+autoComplete="off"        // Pro předmět/zprávu
+```
+
+**3. Kdy používat suppressHydrationWarning:**
+
+- ✅ Formulářové inputy (email, password, text)
+- ✅ Client components s proměnlivým obsahem
+- ❌ NIKDY na statický obsah
+- ❌ NIKDY jako "quick fix" pro skutečné hydration problémy
+
+### 8.3 Další časté příčiny Hydration Errors
+
+**Date/Time formatting:**
+```typescript
+// ❌ Špatně - timezone differ server vs client
+<div>{new Date().toLocaleString()}</div>
+
+// ✅ Správně - unified timestamp
+<div suppressHydrationWarning>
+  {new Date().toLocaleString('cs-CZ', { timeZone: 'UTC' })}
+</div>
+```
+
+**Random values:**
+```typescript
+// ❌ Špatně - různé hodnoty server vs client
+<div id={Math.random()}>...</div>
+
+// ✅ Správně - deterministické ID
+import { useId } from 'react';
+const id = useId();
+<div id={id}>...</div>
+```
+
+**Conditional rendering based on window:**
+```typescript
+// ❌ Špatně - undefined na serveru
+{typeof window !== 'undefined' && <Component />}
+
+// ✅ Správně - useEffect nebo suppressHydrationWarning
+const [mounted, setMounted] = useState(false);
+useEffect(() => setMounted(true), []);
+{mounted && <Component />}
+```
+
+---
+
+## 9. Aktuální známé problémy
 
 > Tato sekce se průběžně aktualizuje. Vyřešené problémy se mažou.
 
@@ -626,10 +718,11 @@ export default function RootNotFound() {
 | FETCH-001 | Cookies se neodesílají bez `credentials: 'include'` | Medium | Dokumentováno | Viz sekce 6.5 - nutné pro JWT autentizaci |
 | REACT19-001 | `setState` v `useEffect` způsobuje ESLint error | Medium | Vyřešeno | Použít `useSyncExternalStore` pro external state (cookies) |
 | I18N-001 | Duplicitní `<html>/<body>` v root a locale layoutech | High | Dokumentováno | Viz sekce 7 - root layout musí být minimální |
+| HYDRATION-001 | Browser extensions způsobují hydration errors ve formulářích | Low | Vyřešeno | Viz sekce 8 - použít suppressHydrationWarning na input fields |
 
 ---
 
-## 9. Monitoring checklist
+## 10. Monitoring checklist
 
 - [ ] Sentry/podobná služba nakonfigurována
 - [x] Error boundary komponenty implementovány

@@ -40,6 +40,7 @@ export default async function ProductsPage({
   const mockProducts = Array.from({ length: 12 }, (_, i) => ({
     slug: `ketubah-${i + 1}`,
     name: `Ketubah ${i + 1}`,
+    shortDescription: `Krásná ručně malovaná ketuba s tradičními motivy. Každý kus je originál s možností personalizace.`,
     prices: {
       giclee: 5900 + i * 1000,
       gicleeAvailable: true,
