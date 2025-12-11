@@ -6,6 +6,30 @@ Přehled změn v projektu Ketubah E-shop.
 
 ## 2025-12-11
 
+### Design & Styling
+- **Dekorativní gradient background** - subtilní vrstva pod všemi sekcemi:
+  - Main background: `linear-gradient(to right, fialová → žlutá → tyrkysová, opacity 0.25)`
+  - Vytváří jednotný podtón bez narušení sekcí
+  - Barvy: #1C051F (fialová), #1F1C05 (žlutá), #051F1C (tyrkysová)
+
+- **Dvouvrstvý gradient system pro sekce**:
+  - Top layer: dekorativní gradient (fialová → žlutá → tyrkysová, opacity 0.08)
+  - Bottom layer: primární gradient (sekce-specifické barvy)
+  - Sekcí: Hero (růžová/modrá), Novinky (žlutá/oranžová), Populární (růžová zdola)
+
+- **Hero sekce design improvements**:
+  - H1 nadpis posazený nahoře (místo středu)
+  - Dekorativní osmička (∞) pod CTA tlačítkem (viditelná pouze na lg+)
+  - Zvýšení visuální hierarchie a vzduchu
+
+- **Footer redesign**:
+  - Přechod z tmavých barev: fialová → žlutá → tyrkysová
+  - Elegantní dekorativní gradient namísto jednolité barvy
+
+- **Květinové akvarelové barvy**:
+  - Všechny sekce mají jemné flower-like přechody
+  - Zachování čistého designu (nízké opacity gradientů)
+
 ### Přidáno
 - **Payload API routes** - chyběl `src/app/(payload)/api/[...slug]/route.ts`, opraveno 404 na `/api/users/me`
 - **Media access control** - veřejné čtení médií (`read: () => true`)

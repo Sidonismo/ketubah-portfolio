@@ -99,7 +99,7 @@ export default function ContactPage() {
               minLength={2}
               maxLength={100}
               autoComplete="name"
-              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2 bg-white text-black border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
               suppressHydrationWarning
             />
           </div>
@@ -117,7 +117,7 @@ export default function ContactPage() {
               onChange={handleChange}
               required
               autoComplete="email"
-              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2 bg-white text-black border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
               suppressHydrationWarning
             />
           </div>
@@ -137,7 +137,7 @@ export default function ContactPage() {
               minLength={5}
               maxLength={200}
               autoComplete="off"
-              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2 bg-white text-black border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
               suppressHydrationWarning
             />
           </div>
@@ -157,7 +157,7 @@ export default function ContactPage() {
               maxLength={5000}
               rows={6}
               autoComplete="off"
-              className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2 bg-white text-black border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary"
               suppressHydrationWarning
             />
           </div>

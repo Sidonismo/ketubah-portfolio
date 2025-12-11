@@ -7,7 +7,8 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-footer text-white">
+    <footer className="text-white" style={{ background: 'linear-gradient(to right, #1C051F, #1F1C05, #051F1C, #1F1C05, #1C051F)' }}>
+      {/* Footer s dekorativním gradientem: fialová → žlutá → tyrkysová */}
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Logo a tagline */}

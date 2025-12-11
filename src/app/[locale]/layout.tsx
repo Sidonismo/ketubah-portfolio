@@ -46,7 +46,11 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} dir={dir} className={`${inter.variable} ${notoSansHebrew.variable}`}>
-      <body className={`${dir === 'rtl' ? 'font-hebrew' : 'font-sans'} flex flex-col min-h-screen antialiased`}>
+      {/* Body s dekorativním background gradientem: fialová → žlutá → tyrkysová */}
+      <body
+        className={`${dir === 'rtl' ? 'font-hebrew' : 'font-sans'} flex flex-col min-h-screen antialiased`}
+        style={{ background: 'linear-gradient(to right, rgba(28, 5, 31, 0.25), rgba(31, 28, 5, 0.25), rgba(5, 31, 28, 0.25), rgba(31, 28, 5, 0.25), rgba(28, 5, 31, 0.25))' }}
+      >
         <NextIntlClientProvider messages={messages}>
           <Suspense fallback={null}>
             <NavigationProgress />
