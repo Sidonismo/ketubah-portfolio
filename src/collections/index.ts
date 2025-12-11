@@ -7,3 +7,4 @@ export { Tags } from './Tags';
 export { ExchangeRates } from './ExchangeRates';
 export { Products } from './Products';
 export { Pages } from './Pages';
+export { Reviews } from './Reviews';

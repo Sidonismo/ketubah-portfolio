@@ -33,6 +33,21 @@
       "feature3": "Možnost personalizace textu a barev",
       "cta": "Objevit nové práce",
       "imageAlt": "Nová ketuba"
+    },
+    "reviews": {
+      "title": "Co říkají naši zákazníci",
+      "subtitle": "Desítky spokojených párů z celého světa",
+      "rating": "Průměrné hodnocení",
+      "outOf5": "z 5 hvězd",
+      "readMore": "Přečíst více",
+      "verified": "Ověřená recenze",
+      "trustBadges": {
+        "title": "Naši klienti nám věří",
+        "totalReviews": "Recenzí",
+        "averageRating": "Průměr",
+        "yearsInBusiness": "Let v provozu",
+        "satisfiedCustomers": "Spokojení zákazníci"
+      }
     }
   },
   "products": {

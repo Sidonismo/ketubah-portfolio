@@ -33,6 +33,21 @@
       "feature3": "Text and color personalization options",
       "cta": "Discover new works",
       "imageAlt": "New ketubah"
+    },
+    "reviews": {
+      "title": "What Our Customers Say",
+      "subtitle": "Hundreds of happy couples from around the world",
+      "rating": "Average Rating",
+      "outOf5": "out of 5 stars",
+      "readMore": "Read more",
+      "verified": "Verified Review",
+      "trustBadges": {
+        "title": "Trusted by Our Clients",
+        "totalReviews": "Reviews",
+        "averageRating": "Average",
+        "yearsInBusiness": "Years in Business",
+        "satisfiedCustomers": "Satisfied Customers"
+      }
     }
   },
   "products": {

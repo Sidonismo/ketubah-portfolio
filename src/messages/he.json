@@ -33,6 +33,21 @@
       "feature3": "אפשרויות התאמה אישית של טקסט וצבעים",
       "cta": "גלה עבודות חדשות",
       "imageAlt": "כתובה חדשה"
+    },
+    "reviews": {
+      "title": "מה הלקוחות שלנו אומרים",
+      "subtitle": "מאות זוגות שמחים מכל רחבי העולם",
+      "rating": "דירוג ממוצע",
+      "outOf5": "מתוך 5 כוכבים",
+      "readMore": "קרא עוד",
+      "verified": "ביקורת מאומתת",
+      "trustBadges": {
+        "title": "הלקוחות שלנו תוקפים אותנו",
+        "totalReviews": "ביקורות",
+        "averageRating": "ממוצע",
+        "yearsInBusiness": "שנים בעסק",
+        "satisfiedCustomers": "לקוחות שמחים"
+      }
     }
   },
   "products": {

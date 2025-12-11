@@ -1,11 +1,12 @@
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/components/ui/Link';
 import type { Metadata } from 'next';
-import { getPopularProducts } from '@/lib/queries';
+import { getPopularProducts, getFeaturedReviews, getReviewsStats } from '@/lib/queries';
 import { getExchangeRates } from '@/lib/cnb';
 import { formatConvertedPrice, getDefaultCurrency } from '@/lib/currency';
 import Image from 'next/image';
 import { WebsiteJsonLd, OrganizationJsonLd } from '@/components/seo/JsonLd';
+import { ReviewsSection } from '@/components/home/ReviewsSection';
 import { siteConfig } from '@/config/site';
 
 interface HomePageProps {
@@ -28,10 +29,12 @@ export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'home' });
 
-  // Paralelní načtení populárních produktů a kurzů měn
-  const [popularProducts, exchangeRates] = await Promise.all([
+  // Paralelní načtení populárních produktů, recenzí, kurzů měn a statistik
+  const [popularProducts, exchangeRates, reviews, reviewsStats] = await Promise.all([
     getPopularProducts(locale, 5),
     getExchangeRates(),
+    getFeaturedReviews(3),
+    getReviewsStats(),
   ]);
 
   const currency = getDefaultCurrency(locale);
@@ -305,6 +308,12 @@ export default async function HomePage({ params }: HomePageProps) {
             </div>
           </div>
         </section>
+
+        {/* Sekce s recenzemi - dvě vrstvy gradientů:
+            1. Top layer: dekorativní gradient (fialová → žlutá → tyrkysová, opacity 0.08)
+            2. Bottom layer: primární gradient (modrá → oranžová, opacity 0.05)
+        */}
+        <ReviewsSection reviews={reviews} stats={reviewsStats} />
       </main>
     </>
   );

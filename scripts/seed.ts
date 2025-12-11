@@ -570,6 +570,87 @@ async function seed() {
       console.log('ℹ️  Kurzy již existují');
     }
 
+    // 9. Recenze
+    console.log('\n⭐ Vytvářím recenze...');
+    const productsList = await payload.find({ collection: 'products', limit: 20 });
+    const sampleProducts = productsList.docs.slice(0, 3);
+
+    const reviewsData = [
+      {
+        authorName: 'Petra & Jiří',
+        authorEmail: 'petra@example.com',
+        rating: 5,
+        title: 'Překrásná a osobitá ketuba!',
+        content: 'Naše ketuba je absolutně úžasná. Umělkyně se mnou intenzivně spolupracovala na personalizaci a výsledek je víc než jsme očekávali. Kvalita je vynikající, doporučujeme to všem našim přátelům.',
+        product: sampleProducts[0]?.id,
+        featured: true,
+      },
+      {
+        authorName: 'Anna & David',
+        authorEmail: 'anna@example.com',
+        rating: 5,
+        title: 'Nejlepší investice do našeho domu',
+        content: 'Objednali jsme si originální ketubah a je to opravdu skvělý kus umění. Visí u nás v obývacím pokoji a každý, kdo ji vidí, se ptá kde jsme ji pořídili. Velmi doporučuji!',
+        product: sampleProducts[1]?.id,
+        featured: true,
+      },
+      {
+        authorName: 'Miriam & Yosef',
+        authorEmail: 'miriam@example.com',
+        rating: 5,
+        title: 'תופעה לתשובה - מדהימה!',
+        content: 'הכתובה שלנו היא יפהפייה! האמנית עשתה עבודה מעולה במהלך כל התהליך. זה משהו מיוחד באמת שאנחנו עדיין מכתשים על זה.',
+        product: sampleProducts[2]?.id,
+        featured: true,
+      },
+      {
+        authorName: 'Tereza',
+        authorEmail: 'tereza@example.com',
+        rating: 4,
+        title: 'Skvělá komunikace a kvalita',
+        content: 'Objednala jsem si giclée tisk a jsem velmi spokojena. Dodání trvalo déle než očekáváno, ale balení bylo pečlivě připraveno.',
+        product: undefined,
+        featured: false,
+      },
+      {
+        authorName: 'Rachel',
+        authorEmail: 'rachel@example.com',
+        rating: 5,
+        title: 'Custom work exceeded expectations!',
+        content: 'We had a custom ketubah made and it turned out beautifully. The artist was patient with our requests and the final product is absolutely stunning.',
+        product: undefined,
+        featured: false,
+      },
+    ];
+
+    for (const review of reviewsData) {
+      const existing = await payload.find({
+        collection: 'reviews',
+        where: { authorEmail: { equals: review.authorEmail } },
+        limit: 1,
+      });
+      if (existing.totalDocs > 0) {
+        console.log(`  ℹ️  Recenze od ${review.authorName} již existuje`);
+        continue;
+      }
+
+      await payload.create({
+        collection: 'reviews',
+        data: {
+          authorName: review.authorName,
+          authorEmail: review.authorEmail,
+          rating: review.rating,
+          title: review.title,
+          content: review.content,
+          product: review.product,
+          featured: review.featured,
+          status: 'published',
+          publishedAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+        },
+      });
+      console.log(`  ✅ ${review.authorName}`);
+    }
+
     console.log('\n🎉 Seedování dokončeno!');
     console.log('\n📋 Přihlašovací údaje:');
     console.log('   Email: admin@ketubah.cz');

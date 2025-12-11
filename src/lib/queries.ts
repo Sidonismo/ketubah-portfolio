@@ -530,3 +530,124 @@ export async function getAllPageSlugs(): Promise<string[]> {
     return ['about', 'faq', 'privacy', 'cookies'];
   }
 }
+
+/**
+ * Typy pro recenze
+ */
+export interface Review {
+  id: string;
+  authorName: string;
+  rating: number;
+  title: string;
+  content: string;
+  product?: {
+    name: string;
+    slug: string;
+  };
+  publishedAt: string;
+  featured: boolean;
+}
+
+/**
+ * Načtení featured recenzí pro homepage
+ */
+export async function getFeaturedReviews(limit: number = 3): Promise<Review[]> {
+  try {
+    const payload = await getPayloadClient();
+
+    const result = await payload.find({
+      collection: 'reviews',
+      where: {
+        status: { equals: 'published' },
+        featured: { equals: true },
+      },
+      depth: 1,
+      limit,
+      sort: '-publishedAt',
+    });
+
+    return result.docs.map((doc) => ({
+      id: doc.id as string,
+      authorName: doc.authorName as string || '',
+      rating: doc.rating as number || 0,
+      title: doc.title as string || '',
+      content: doc.content as string || '',
+      product: (doc.product as Record<string, unknown>)
+        ? {
+            name: (doc.product as Record<string, unknown>).name as string || '',
+            slug: (doc.product as Record<string, unknown>).slug as string || '',
+          }
+        : undefined,
+      publishedAt: doc.publishedAt as string || '',
+      featured: doc.featured as boolean || false,
+    }));
+  } catch (error) {
+    console.error('Error fetching featured reviews:', error);
+    return [];
+  }
+}
+
+/**
+ * Načtení statistik recenzí (průměr, počet)
+ */
+export async function getReviewsStats(): Promise<{
+  totalReviews: number;
+  averageRating: number;
+  fiveStarCount: number;
+  fourStarCount: number;
+  threeStarCount: number;
+  twoStarCount: number;
+  oneStarCount: number;
+}> {
+  try {
+    const payload = await getPayloadClient();
+
+    const result = await payload.find({
+      collection: 'reviews',
+      where: {
+        status: { equals: 'published' },
+      },
+      limit: 1000,
+      depth: 0,
+    });
+
+    const reviews = result.docs;
+    const totalReviews = reviews.length;
+
+    if (totalReviews === 0) {
+      return {
+        totalReviews: 0,
+        averageRating: 0,
+        fiveStarCount: 0,
+        fourStarCount: 0,
+        threeStarCount: 0,
+        twoStarCount: 0,
+        oneStarCount: 0,
+      };
+    }
+
+    const ratings = reviews.map((r) => r.rating as number || 0);
+    const averageRating = ratings.reduce((a, b) => a + b, 0) / totalReviews;
+
+    return {
+      totalReviews,
+      averageRating: Math.round(averageRating * 10) / 10,
+      fiveStarCount: ratings.filter((r) => r === 5).length,
+      fourStarCount: ratings.filter((r) => r === 4).length,
+      threeStarCount: ratings.filter((r) => r === 3).length,
+      twoStarCount: ratings.filter((r) => r === 2).length,
+      oneStarCount: ratings.filter((r) => r === 1).length,
+    };
+  } catch (error) {
+    console.error('Error fetching reviews stats:', error);
+    return {
+      totalReviews: 0,
+      averageRating: 0,
+      fiveStarCount: 0,
+      fourStarCount: 0,
+      threeStarCount: 0,
+      twoStarCount: 0,
+      oneStarCount: 0,
+    };
+  }
+}
