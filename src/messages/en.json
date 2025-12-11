@@ -20,7 +20,19 @@
     },
     "popular": {
       "title": "Most popular ketubot",
-      "description": "Discover our most beloved works"
+      "description": "Discover our most beloved works",
+      "exploreMore": "Explore more",
+      "uniqueDesigns": "Unique designs for your special day"
+    },
+    "news": {
+      "badge": "What's New",
+      "title": "New Designs & Collections",
+      "description": "Every month we add new unique ketubot inspired by tradition and modern art.",
+      "feature1": "Hand-painted originals on premium paper",
+      "feature2": "Museum-quality Giclée prints",
+      "feature3": "Text and color personalization options",
+      "cta": "Discover new works",
+      "imageAlt": "New ketubah"
     }
   },
   "products": {

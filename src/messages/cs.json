@@ -20,7 +20,19 @@
     },
     "popular": {
       "title": "Nejpopulárnější ketubot",
-      "description": "Objevte naše nejoblíbenější práce"
+      "description": "Objevte naše nejoblíbenější práce",
+      "exploreMore": "Prozkoumejte více",
+      "uniqueDesigns": "Unikátní designy pro váš zvláštní den"
+    },
+    "news": {
+      "badge": "Novinky",
+      "title": "Nové designy a kolekce",
+      "description": "Každý měsíc přidáváme nové unikátní ketubot inspirované tradicí a moderním uměním.",
+      "feature1": "Ručně malované originály na prémiový papír",
+      "feature2": "Giclée tisky v muzejní kvalitě",
+      "feature3": "Možnost personalizace textu a barev",
+      "cta": "Objevit nové práce",
+      "imageAlt": "Nová ketuba"
     }
   },
   "products": {

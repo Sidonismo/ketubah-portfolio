@@ -18,10 +18,18 @@ Přehled změn v projektu Ketubah E-shop.
   - `BreadcrumbsJsonLd` a `ProductJsonLd` s cenami na product detail (`products/[slug]/page.tsx`)
   - Nové komponenty v `components/seo/JsonLd.tsx`: BreadcrumbsJsonLd, ItemListJsonLd, ProductJsonLd
   - Ceny v CZK, breadcrumbs navigace, product offers (giclee + original)
+- **Homepage redesign** - nový layout s gradient pozadím:
+  - Hero sekce: `bg-gradient-to-br from-white via-gray-50 to-white`
+  - Novinky sekce: `bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5` s textem vlevo a obrázkem vpravo
+  - Popular sekce: `bg-gradient-to-bl from-white via-slate-50 to-gray-50` s bento gridem (8x8)
+  - Translations pro news sekce (cs, en, he)
+- **SearchBar loading state** - spinner při vyhledávání, automatický reset po načtení URL
+- **ProductGallery aspect ratio** - dynamické přizpůsobení podle rozměrů obrázku místo fixního 4:3
 
 ### Opraveno
 - **Footer hardcoded texty** - nahrazeny překlady z `tCommon()`
 - **SearchBar mizení** - odstraněn debounce, input se zavře jen při submit nebo kliknutí mimo
+- **SearchBar persistence** - přidán useEffect pro reset stavu po změně URL (usePathname, useSearchParams)
 
 ### Změněno
 - **ProductFilters** - při < 7 výsledcích kliknutí na filtr zruší search query
