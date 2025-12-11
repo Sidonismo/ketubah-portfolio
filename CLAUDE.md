@@ -8,9 +8,14 @@ Multilingual e-shop for selling Giclée prints and original Ketubot (Jewish wedd
 
 ## Documentation
 
-- **[docs/PRD_KETUBAH_ESHOP.md](./docs/PRD_KETUBAH_ESHOP.md)** - Complete product requirements, architecture, data models, and implementation phases
-- **[docs/ERROR_HANDLING_LOG.md](./docs/ERROR_HANDLING_LOG.md)** - Error handling strategies, Edge Runtime limitations, Next.js 15 breaking changes
-- **[DEVELOPMENT_LOG.md](./DEVELOPMENT_LOG.md)** - Development progress log
+Veškerá dokumentace je ve složce `docs/`:
+
+- **[PRD_KETUBAH_ESHOP.md](./docs/PRD_KETUBAH_ESHOP.md)** - Product requirements, architecture, data models
+- **[CHANGELOG.md](./docs/CHANGELOG.md)** - Přehled změn podle data
+- **[SETUP.md](./docs/SETUP.md)** - Instalace a konfigurace
+- **[TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md)** - Řešení běžných problémů
+- **[PAYLOAD_NOTES.md](./docs/PAYLOAD_NOTES.md)** - Payload CMS dokumentace
+- **[ERROR_HANDLING_LOG.md](./docs/ERROR_HANDLING_LOG.md)** - Edge Runtime, Next.js 15 specifika
 
 ## Quick Reference
 
