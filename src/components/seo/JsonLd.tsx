@@ -62,3 +62,86 @@ export function OrganizationJsonLd({
 
   return <JsonLd data={data} />;
 }
+
+// Breadcrumbs JSON-LD
+export function BreadcrumbsJsonLd({
+  items,
+}: {
+  items: Array<{ name: string; url: string }>;
+}) {
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+
+  return <JsonLd data={data} />;
+}
+
+// ItemList JSON-LD pro seznam produktů
+export function ItemListJsonLd({
+  items,
+  url,
+}: {
+  items: Array<{ name: string; url: string; image?: string }>;
+  url: string;
+}) {
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    url,
+    numberOfItems: items.length,
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      url: item.url,
+      ...(item.image && { image: item.image }),
+    })),
+  };
+
+  return <JsonLd data={data} />;
+}
+
+// Product JSON-LD pro detail produktu
+export function ProductJsonLd({
+  name,
+  description,
+  image,
+  url,
+  offers,
+}: {
+  name: string;
+  description?: string;
+  image?: string;
+  url: string;
+  offers: Array<{
+    price: number;
+    priceCurrency: string;
+    availability: string;
+    name?: string;
+  }>;
+}) {
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name,
+    ...(description && { description }),
+    ...(image && { image }),
+    url,
+    offers: offers.map((offer) => ({
+      '@type': 'Offer',
+      price: offer.price.toFixed(2),
+      priceCurrency: offer.priceCurrency,
+      availability: offer.availability,
+      ...(offer.name && { name: offer.name }),
+    })),
+  };
+
+  return <JsonLd data={data} />;
+}

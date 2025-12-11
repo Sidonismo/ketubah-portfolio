@@ -5,6 +5,8 @@ import { getPopularProducts } from '@/lib/queries';
 import { getExchangeRates } from '@/lib/cnb';
 import { formatConvertedPrice, getDefaultCurrency } from '@/lib/currency';
 import Image from 'next/image';
+import { WebsiteJsonLd, OrganizationJsonLd } from '@/components/seo/JsonLd';
+import { siteConfig } from '@/config/site';
 
 interface HomePageProps {
   params: Promise<{ locale: string }>;
@@ -40,9 +42,23 @@ export default async function HomePage({ params }: HomePageProps) {
   const otherProducts = popularProducts.slice(1, 5);
 
   return (
-    <main className="min-h-screen">
-      {/* Hero sekce */}
-      <section className="container mx-auto px-4 py-16">
+    <>
+      {/* JSON-LD pro homepage */}
+      <WebsiteJsonLd
+        name={siteConfig.name}
+        url={`${siteConfig.url}/${locale}`}
+        description={t('hero.description')}
+      />
+      <OrganizationJsonLd
+        name={siteConfig.name}
+        url={siteConfig.url}
+        logo={`${siteConfig.url}/logo.png`}
+        email={siteConfig.contact.email}
+      />
+
+      <main className="min-h-screen">
+        {/* Hero sekce */}
+        <section className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           {/* Text */}
           <div>
@@ -64,14 +80,14 @@ export default async function HomePage({ params }: HomePageProps) {
           </div>
 
           {/* Featured obrázek */}
-          <div className="relative bg-card-bg rounded-lg aspect-[4/3] overflow-hidden">
+          <div className="relative bg-card-bg rounded-lg aspect-[3/4] overflow-hidden">
             {mainProduct?.images[0]?.image?.url ? (
               <Link href={`/products/${mainProduct.slug}`} className="block w-full h-full">
                 <Image
                   src={mainProduct.images[0].image.url}
                   alt={mainProduct.images[0].alt || mainProduct.name}
                   fill
-                  className="object-cover hover:scale-105 transition-transform duration-300"
+                  className="object-contain hover:scale-105 transition-transform duration-300"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   priority
                 />
@@ -109,7 +125,7 @@ export default async function HomePage({ params }: HomePageProps) {
                     src={mainProduct.images[0].image.url}
                     alt={mainProduct.images[0].alt || mainProduct.name}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="object-contain group-hover:scale-105 transition-transform duration-300"
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 ) : (
@@ -143,7 +159,7 @@ export default async function HomePage({ params }: HomePageProps) {
                     src={product.images[0].image.url}
                     alt={product.images[0].alt || product.name}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="object-contain group-hover:scale-105 transition-transform duration-300"
                     sizes="(max-width: 768px) 50vw, 25vw"
                   />
                 ) : (
@@ -178,5 +194,6 @@ export default async function HomePage({ params }: HomePageProps) {
         </div>
       </section>
     </main>
+    </>
   );
 }

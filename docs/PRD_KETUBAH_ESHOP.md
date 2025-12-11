@@ -27,75 +27,91 @@ Moderní, responzivní a SEO-friendly eshop pro prodej Giclée tisků a originá
 ### 2.1 Struktura projektu
 ```
 ketubah-eshop/
-├── app/
-│   ├── [locale]/
-│   │   ├── page.tsx                    # Úvodní stránka
+├── src/
+│   ├── app/
+│   │   ├── (payload)/                  # Payload CMS admin (route group)
+│   │   │   ├── admin/[[...segments]]/page.tsx
+│   │   │   ├── api/[...slug]/route.ts  # Payload REST API
+│   │   │   └── layout.tsx
+│   │   ├── [locale]/
+│   │   │   ├── page.tsx                # Úvodní stránka
+│   │   │   ├── layout.tsx              # Locale layout
+│   │   │   ├── loading.tsx             # Global loading skeleton
+│   │   │   ├── not-found.tsx           # 404 stránka
+│   │   │   ├── [slug]/page.tsx         # Dynamické stránky (O mně, FAQ...)
+│   │   │   ├── contact/page.tsx        # Kontaktní formulář
+│   │   │   └── products/
+│   │   │       ├── page.tsx            # Seznam produktů (paginated)
+│   │   │       ├── loading.tsx         # Products loading skeleton
+│   │   │       └── [slug]/
+│   │   │           ├── page.tsx        # Detail produktu
+│   │   │           └── loading.tsx     # Product detail skeleton
+│   │   ├── api/
+│   │   │   ├── search/route.ts         # Meilisearch API endpoint
+│   │   │   ├── contact/route.ts        # Resend email endpoint
+│   │   │   └── cron/exchange-rates/route.ts  # ČNB kurzy cron
+│   │   ├── sitemap.ts
+│   │   ├── robots.ts
+│   │   ├── layout.tsx                  # Root layout
+│   │   └── error.tsx                   # Error boundary
+│   ├── collections/
+│   │   ├── Users.ts
+│   │   ├── Products.ts
+│   │   ├── Media.ts
+│   │   ├── Pages.ts
+│   │   ├── Categories.ts
+│   │   ├── Languages.ts
+│   │   ├── Colors.ts
+│   │   ├── Tags.ts
+│   │   ├── ExchangeRates.ts
+│   │   └── index.ts                    # Re-export všech kolekcí
+│   ├── components/
+│   │   ├── layout/
+│   │   │   ├── Header.tsx
+│   │   │   ├── Footer.tsx
+│   │   │   ├── LanguageSwitcher.tsx
+│   │   │   └── CurrencySwitcher.tsx
 │   │   ├── products/
-│   │   │   ├── page.tsx                # Seznam produktů (paginated)
-│   │   │   └── [slug]/page.tsx         # Detail produktu
-│   │   ├── contact/page.tsx            # Kontaktní formulář
-│   │   ├── [slug]/page.tsx             # Dynamické stránky (O mně, FAQ, Cookies...)
-│   │   └── not-found.tsx               # 404 stránka
-│   ├── api/
-│   │   ├── search/route.ts             # Meilisearch API endpoint
-│   │   ├── contact/route.ts            # Resend email endpoint
-│   │   └── admin/                      # Admin API endpoints
-│   ├── sitemap.ts                      # Dynamická sitemap
-│   ├── robots.ts                       # Robots.txt
-│   └── layout.tsx                      # Root layout
-├── collections/
-│   ├── Users.ts                        # Admin uživatelé
-│   ├── Products.ts                     # Produkty (ketubot)
-│   ├── Media.ts                        # Média/obrázky
-│   ├── Pages.ts                        # Dynamické stránky
-│   ├── Categories.ts                   # Kategorie produktů
-│   ├── Languages.ts                    # Konfigurace jazyků
-│   ├── Colors.ts                       # Předdefinované barvy
-│   ├── Tags.ts                         # Klíčová slova/tagy
-│   └── ExchangeRates.ts                # Kurzy měn z ČNB
-├── components/
-│   ├── layout/
-│   │   ├── Header.tsx
-│   │   ├── Footer.tsx
-│   │   ├── LanguageSwitcher.tsx
-│   │   └── Navigation.tsx
-│   ├── products/
-│   │   ├── ProductCard.tsx
-│   │   ├── ProductGallery.tsx          # S lightbox (react-photoswipe-gallery)
-│   │   ├── ProductGrid.tsx
-│   │   └── Pagination.tsx
-│   ├── search/
-│   │   ├── SearchBar.tsx
-│   │   ├── SearchResults.tsx
-│   │   └── InstantSearch.tsx
-│   ├── seo/
-│   │   ├── JsonLd.tsx
-│   │   ├── ProductJsonLd.tsx
-│   │   ├── FAQJsonLd.tsx
-│   │   └── BreadcrumbsJsonLd.tsx
-│   └── ui/
-│       ├── Button.tsx
-│       ├── Input.tsx
-│       ├── Card.tsx
-│       ├── Skeleton.tsx
-│       └── CookieConsent.tsx           # GDPR cookie banner
-├── lib/
-│   ├── i18n.ts                         # Lokalizační helper
-│   ├── payload.ts                      # Payload client
-│   ├── meilisearch.ts                  # Meilisearch client
-│   ├── resend.ts                       # Resend client
-│   ├── cnb.ts                          # ČNB kurzy měn client
-│   ├── currency.ts                     # Převod měn helper
-│   └── utils.ts                        # Utility funkce
-├── config/
-│   ├── locales.ts                      # Konfigurace jazyků
-│   └── site.ts                         # Konfigurace webu
-├── messages/
-│   ├── cs.json                         # České překlady UI
-│   ├── en.json                         # Anglické překlady UI
-│   └── he.json                         # Hebrejské překlady UI (RTL)
-├── middleware.ts                       # i18n routing + JWT ochrana admin
-├── payload.config.ts                   # Payload CMS konfigurace
+│   │   │   ├── ProductCard.tsx
+│   │   │   ├── ProductGallery.tsx      # PhotoSwipe lightbox
+│   │   │   ├── ProductGrid.tsx
+│   │   │   ├── ProductFilters.tsx      # Filtry kategorií
+│   │   │   └── Pagination.tsx
+│   │   ├── search/
+│   │   │   └── SearchBar.tsx
+│   │   ├── seo/
+│   │   │   ├── JsonLd.tsx
+│   │   │   ├── ProductJsonLd.tsx
+│   │   │   ├── FAQJsonLd.tsx
+│   │   │   └── BreadcrumbsJsonLd.tsx
+│   │   └── ui/
+│   │       ├── Link.tsx                # Lokalizovaný link
+│   │       ├── CookieConsent.tsx
+│   │       └── NavigationProgress.tsx  # Loading bar při navigaci
+│   ├── lib/
+│   │   ├── i18n.ts
+│   │   ├── payload.ts
+│   │   ├── queries.ts                  # CMS query helpers
+│   │   ├── meilisearch.ts
+│   │   ├── resend.ts
+│   │   ├── cnb.ts
+│   │   ├── currency.ts
+│   │   ├── validations.ts              # Zod schemas
+│   │   └── utils.ts
+│   ├── config/
+│   │   ├── locales.ts
+│   │   └── site.ts
+│   ├── messages/
+│   │   ├── cs.json
+│   │   ├── en.json
+│   │   └── he.json
+│   └── middleware.ts
+├── docs/                               # Dokumentace
+├── scripts/
+│   └── seed.ts                         # Seed script pro DB
+├── public/
+│   └── media/                          # Uploadnuté obrázky
+├── payload.config.ts
 ├── tailwind.config.ts
 └── .env.local
 ```
@@ -103,26 +119,21 @@ ketubah-eshop/
 ### 2.2 Environment Variables
 ```env
 # Databáze
-POSTGRES_URL=postgresql://...
-DATABASE_URI=postgresql://...
+DATABASE_URI=postgresql://user:password@localhost:5432/ketubah_eshop
 
-# Payload CMS
+# Payload CMS (využívá vlastní JWT, nepotřebuje separátní JWT_SECRET)
 PAYLOAD_SECRET=min_32_znaku_nahodny_retezec
 
 # Veřejná URL
 NEXT_PUBLIC_SITE_URL=https://example.com
 
-# Meilisearch
+# Meilisearch (volitelné - fallback na PostgreSQL LIKE)
 MEILISEARCH_HOST=http://localhost:7700
 MEILISEARCH_ADMIN_KEY=masterKey
-MEILISEARCH_SEARCH_KEY=searchOnlyKey
 
 # Resend (email)
 RESEND_API_KEY=re_...
 CONTACT_EMAIL=info@example.com
-
-# JWT
-JWT_SECRET=min_32_znaku_pro_jwt
 ```
 
 ---
@@ -237,6 +248,10 @@ JWT_SECRET=min_32_znaku_pro_jwt
 // collections/Media.ts
 {
   slug: 'media',
+  access: {
+    // Veřejné čtení médií (pro zobrazení obrázků na webu)
+    read: () => true,
+  },
   upload: {
     staticDir: 'public/media',
     mimeTypes: ['image/*'],
@@ -267,7 +282,10 @@ JWT_SECRET=min_32_znaku_pro_jwt
       type: 'text',
       required: true,
       localized: true,
-      // Popis obrázku pro screen readery
+      label: 'Alternativní text',
+      admin: {
+        description: 'Popis obrázku pro screen readery a SEO',
+      },
     },
   ],
 }
@@ -892,13 +910,12 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical';
 │  └───────────────────┘  │
 │                         │
 │  Název produktu         │  ← Název (font-medium)
+│  Krátký popis...        │  ← shortDescription (line-clamp-2)
 │  od 5 900 Kč            │  ← Cena (ve vybrané měně)
 │                         │
-│  ┌─────────────────────┐│
-│  │    Mám zájem        ││  ← CTA button (yellow)
-│  └─────────────────────┘│
 └─────────────────────────┘
 ```
+**Poznámka:** Tlačítko "Mám zájem" je pouze na detailu produktu (lepší UX).
 
 **ProductGallery.tsx:**
 ```
@@ -1014,30 +1031,48 @@ export const config = {
 
 #### app/[locale]/layout.tsx
 ```typescript
-import { getLocale, getMessages } from 'next-intl/server';
+import { Suspense } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
-import { localeConfig } from '@/config/locales';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
+import { getMessages } from 'next-intl/server';
+import { notFound } from 'next/navigation';
+import { locales, localeConfig, type Locale } from '@/config/locales';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
+import { CookieConsent } from '@/components/ui/CookieConsent';
+import { NavigationProgress } from '@/components/ui/NavigationProgress';
+
+// Next.js 15: params je Promise
+interface LocaleLayoutProps {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}
 
 export default async function LocaleLayout({
   children,
-  params: { locale },
-}: {
-  children: React.ReactNode;
-  params: { locale: string };
-}) {
+  params,
+}: LocaleLayoutProps) {
+  const { locale } = await params;
+
+  // Validace locale
+  if (!locales.includes(locale as Locale)) {
+    notFound();
+  }
+
   const messages = await getMessages();
-  const config = localeConfig[locale as keyof typeof localeConfig];
+  const config = localeConfig[locale as Locale];
   const dir = config?.isRTL ? 'rtl' : 'ltr';
 
   return (
     <html lang={locale} dir={dir}>
-      <body className={`${dir === 'rtl' ? 'font-hebrew' : ''}`}>
+      <body className={`${dir === 'rtl' ? 'font-hebrew' : 'font-sans'}`}>
         <NextIntlClientProvider messages={messages}>
+          <Suspense fallback={null}>
+            <NavigationProgress />
+          </Suspense>
           <Header />
-          <main className="min-h-screen">{children}</main>
+          <main className="flex-1">{children}</main>
           <Footer />
+          <CookieConsent />
         </NextIntlClientProvider>
       </body>
     </html>
@@ -1519,8 +1554,13 @@ headers: [
 - GA4 s enhanced e-commerce events
 - Lighthouse CI v pipeline
 
-### 12.3 Logy
-- Development log: `DEVELOPMENT_LOG_{timestamp}.md`
+### 12.3 Dokumentace a logy
+Dokumentace je ve složce `docs/`:
+- `CHANGELOG.md` - přehled změn podle data
+- `SETUP.md` - instalace a konfigurace
+- `TROUBLESHOOTING.md` - řešení běžných problémů
+- `PAYLOAD_NOTES.md` - Payload CMS dokumentace
+- `ERROR_HANDLING_LOG.md` - error handling strategie
 - Error tracking (Sentry nebo podobné)
 
 ---
@@ -1787,8 +1827,19 @@ Tento log obsahuje:
 ---
 
 *Dokument vytvořen: 2024*
-*Verze: 1.3*
-*Poslední aktualizace: 2025-12-09*
+*Verze: 1.4*
+*Poslední aktualizace: 2025-12-11*
+
+### Changelog v1.4:
+- Aktualizována struktura projektu (src/, docs/, scripts/)
+- Přidán Payload API route handler a (payload) route group
+- Přidány loading.tsx skeleton komponenty
+- Přidána NavigationProgress komponenta
+- Přidána ProductFilters komponenta
+- Media collection: přidán public access control
+- ProductCard: odstraněno tlačítko "Mám zájem" (pouze v detailu)
+- Layout: Next.js 15 async params, CookieConsent integrace
+- Dokumentace přesunuta do docs/ složky (CHANGELOG, SETUP, TROUBLESHOOTING)
 
 ### Changelog v1.3:
 - Opravena autentizace: použití vestavěné Payload CMS auth místo custom JWT

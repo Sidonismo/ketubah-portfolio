@@ -35,11 +35,17 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
   const mainImageWidth = activeImage?.image?.sizes?.full?.width || activeImage?.image?.width || 1200;
   const mainImageHeight = activeImage?.image?.sizes?.full?.height || activeImage?.image?.height || 900;
 
+  // Vypočítáme aspect ratio z rozměrů obrázku
+  const aspectRatio = mainImageWidth / mainImageHeight;
+
   return (
     <div className="space-y-4">
       {/* Hlavní obrázek s lightbox */}
       <Gallery>
-        <div className="relative aspect-[4/3] bg-card-bg rounded-lg overflow-hidden group cursor-zoom-in">
+        <div
+          className="relative bg-card-bg rounded-lg overflow-hidden group cursor-zoom-in"
+          style={{ aspectRatio: aspectRatio.toString() }}
+        >
           <Item
             original={mainImageUrl}
             thumbnail={mainImageUrl}

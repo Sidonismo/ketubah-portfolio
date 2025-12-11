@@ -6,6 +6,8 @@ import { Pagination } from '@/components/products/Pagination';
 import { getExchangeRates } from '@/lib/cnb';
 import { getProducts, getCategories } from '@/lib/queries';
 import { Link } from '@/components/ui/Link';
+import { BreadcrumbsJsonLd, ItemListJsonLd } from '@/components/seo/JsonLd';
+import { siteConfig } from '@/config/site';
 
 interface ProductsPageProps {
   params: Promise<{ locale: string }>;
@@ -51,10 +53,31 @@ export default async function ProductsPage({
 
   const { products, totalPages } = productsData;
 
+  // Breadcrumbs data pro JSON-LD
+  const breadcrumbItems = [
+    { name: t('home'), url: `${siteConfig.url}/${locale}` },
+    { name: tProducts('title'), url: `${siteConfig.url}/${locale}/products` },
+  ];
+
+  // ItemList data pro JSON-LD
+  const itemListItems = products.map((product) => ({
+    name: product.name,
+    url: `${siteConfig.url}/${locale}/products/${product.slug}`,
+    image: product.images[0]?.image?.url,
+  }));
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Breadcrumbs */}
-      <nav className="text-sm text-muted mb-6">
+    <>
+      {/* JSON-LD pro products list */}
+      <BreadcrumbsJsonLd items={breadcrumbItems} />
+      <ItemListJsonLd
+        items={itemListItems}
+        url={`${siteConfig.url}/${locale}/products`}
+      />
+
+      <div className="container mx-auto px-4 py-8">
+        {/* Breadcrumbs */}
+        <nav className="text-sm text-muted mb-6">
         <Link href="/" className="hover:text-text">{t('home')}</Link>
         <span className="mx-2">/</span>
         <span className="font-medium text-text">{tProducts('title')}</span>
@@ -100,5 +123,6 @@ export default async function ProductsPage({
         </div>
       )}
     </div>
+    </>
   );
 }

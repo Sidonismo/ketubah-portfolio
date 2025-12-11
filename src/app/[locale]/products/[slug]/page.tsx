@@ -7,6 +7,8 @@ import { Link } from '@/components/ui/Link';
 import { getExchangeRates } from '@/lib/cnb';
 import { formatConvertedPrice, getDefaultCurrency } from '@/lib/currency';
 import { getProductBySlug, getRelatedProducts } from '@/lib/queries';
+import { BreadcrumbsJsonLd, ProductJsonLd } from '@/components/seo/JsonLd';
+import { siteConfig } from '@/config/site';
 
 interface ProductPageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -47,10 +49,47 @@ export default async function ProductPage({ params }: ProductPageProps) {
     4
   );
 
+  // Breadcrumbs data pro JSON-LD
+  const breadcrumbItems = [
+    { name: tCommon('home'), url: `${siteConfig.url}/${locale}` },
+    { name: t('title'), url: `${siteConfig.url}/${locale}/products` },
+    { name: product.name, url: `${siteConfig.url}/${locale}/products/${product.slug}` },
+  ];
+
+  // Product offers pro JSON-LD (ceny v CZK)
+  const offers = [];
+  if (product.prices.gicleeAvailable && product.prices.giclee) {
+    offers.push({
+      price: product.prices.giclee,
+      priceCurrency: 'CZK',
+      availability: 'https://schema.org/InStock',
+      name: t('gicleePrice'),
+    });
+  }
+  if (product.prices.originalAvailable && product.prices.original) {
+    offers.push({
+      price: product.prices.original,
+      priceCurrency: 'CZK',
+      availability: 'https://schema.org/InStock',
+      name: t('originalPrice'),
+    });
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Breadcrumbs */}
-      <nav className="text-sm text-muted mb-6">
+    <>
+      {/* JSON-LD pro product detail */}
+      <BreadcrumbsJsonLd items={breadcrumbItems} />
+      <ProductJsonLd
+        name={product.name}
+        description={product.shortDescription}
+        image={product.images[0]?.image?.url}
+        url={`${siteConfig.url}/${locale}/products/${product.slug}`}
+        offers={offers}
+      />
+
+      <div className="container mx-auto px-4 py-8">
+        {/* Breadcrumbs */}
+        <nav className="text-sm text-muted mb-6">
         <Link href="/" className="hover:text-text">{tCommon('home')}</Link>
         <span className="mx-2">/</span>
         <Link href="/products" className="hover:text-text">{t('title')}</Link>
@@ -165,5 +204,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </section>
       )}
     </div>
+    </>
   );
 }

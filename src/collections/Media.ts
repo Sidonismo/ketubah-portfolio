@@ -14,16 +14,18 @@ export const Media: CollectionConfig = {
       {
         name: 'thumbnail',
         width: 150,
-        height: 150,
+        height: 200,
         position: 'centre',
       },
       {
+        // Karta produktu - vertikální formát pro ketubot (3:4)
         name: 'card',
         width: 400,
-        height: 300,
+        height: 533,
         position: 'centre',
       },
       {
+        // Plná velikost - zachová originální poměr stran
         name: 'full',
         width: 1200,
         height: undefined,

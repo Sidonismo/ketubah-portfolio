@@ -47,8 +47,8 @@ export function ProductCard({ product, exchangeRates }: ProductCardProps) {
 
   return (
     <div className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-      {/* Obrázek */}
-      <Link href={`/products/${product.slug}`} className="block relative aspect-[4/3] bg-card-bg">
+      {/* Obrázek - aspect ratio pro ketubot (typicky A2 = 1:1.41) */}
+      <Link href={`/products/${product.slug}`} className="block relative aspect-[3/4] bg-card-bg">
         {/* Badge pro originál */}
         {product.prices.originalAvailable && (
           <span className="absolute top-2 left-2 z-10 bg-green-500 text-white text-xs px-2 py-1 rounded">
